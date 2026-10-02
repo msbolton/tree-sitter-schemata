@@ -1,0 +1,152 @@
+==================
+namespace and import
+==================
+
+namespace shop.orders
+
+import shop.customers
+import shop.customers as cust
+
+---
+
+(source_file
+  (namespace_declaration
+    name: (qualified_name (identifier) (identifier)))
+  (import_declaration
+    namespace: (qualified_name (identifier) (identifier)))
+  (import_declaration
+    namespace: (qualified_name (identifier) (identifier))
+    alias: (identifier)))
+
+==================
+record with fields
+==================
+
+namespace a
+
+record Order {
+  #1 id: uuid
+  note: string(max = 500)?
+  #3 status: Status = pending
+}
+
+---
+
+(source_file
+  (namespace_declaration name: (qualified_name (identifier)))
+  (record_declaration
+    name: (identifier)
+    body: (record_body
+      (field
+        ordinal: (ordinal)
+        name: (identifier)
+        type: (type name: (qualified_name (identifier))))
+      (field
+        name: (identifier)
+        type: (type
+          name: (qualified_name (identifier))
+          refinements: (refinements
+            (refinement key: (identifier) value: (integer)))))
+      (field
+        ordinal: (ordinal)
+        name: (identifier)
+        type: (type name: (qualified_name (identifier)))
+        default: (identifier)))))
+
+==================
+nested record and reserved
+==================
+
+namespace a
+
+record Outer {
+  #1 x: int32
+  reserved #2, #5..#7, "old_name"
+  record Inner { #1 y: int32 }
+}
+
+---
+
+(source_file
+  (namespace_declaration name: (qualified_name (identifier)))
+  (record_declaration
+    name: (identifier)
+    body: (record_body
+      (field
+        ordinal: (ordinal)
+        name: (identifier)
+        type: (type name: (qualified_name (identifier))))
+      (reserved_statement
+        (ordinal)
+        (ordinal_range (ordinal) (ordinal))
+        (string))
+      (record_declaration
+        name: (identifier)
+        body: (record_body
+          (field
+            ordinal: (ordinal)
+            name: (identifier)
+            type: (type name: (qualified_name (identifier)))))))))
+
+==================
+enum with and without commas
+==================
+
+namespace a
+
+enum Status { #1 pending, #2 paid #3 shipped reserved #4 }
+
+---
+
+(source_file
+  (namespace_declaration name: (qualified_name (identifier)))
+  (enum_declaration
+    name: (identifier)
+    body: (enum_body
+      (enum_value ordinal: (ordinal) name: (identifier))
+      (enum_value ordinal: (ordinal) name: (identifier))
+      (enum_value ordinal: (ordinal) name: (identifier))
+      (reserved_statement (ordinal)))))
+
+==================
+union and alias
+==================
+
+namespace a
+
+union Payment = #1 Card | #2 shop.BankTransfer | Cash
+
+alias Money = decimal(19, 4)
+
+---
+
+(source_file
+  (namespace_declaration name: (qualified_name (identifier)))
+  (union_declaration
+    name: (identifier)
+    (union_member ordinal: (ordinal) type: (type name: (qualified_name (identifier))))
+    (union_member ordinal: (ordinal) type: (type name: (qualified_name (identifier) (identifier))))
+    (union_member type: (type name: (qualified_name (identifier)))))
+  (alias_declaration
+    name: (identifier)
+    type: (type
+      name: (qualified_name (identifier))
+      refinements: (refinements
+        (refinement value: (integer))
+        (refinement value: (integer))))))
+
+==================
+future declarations
+==================
+
+namespace a
+
+service Orders { operation place(o: Order) { nested } }
+stream Events
+
+---
+
+(source_file
+  (namespace_declaration name: (qualified_name (identifier)))
+  (future_declaration (identifier) (block (block)))
+  (future_declaration (identifier)))

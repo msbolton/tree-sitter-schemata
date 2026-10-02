@@ -1,0 +1,187 @@
+==================
+doc comments attach to elements
+==================
+
+/// Namespace doc.
+namespace a
+
+/// Record doc.
+record R {
+  /// Field doc.
+  #1 x: int32
+}
+
+/// Enum doc.
+enum E {
+  /// Value doc.
+  #1 v
+}
+
+/// Union doc.
+union U =
+  /// First member.
+  #1 A
+  | /// Second member.
+  #2 B
+
+/// Alias doc.
+alias M = int32
+
+---
+
+(source_file
+  (doc_comment)
+  (namespace_declaration name: (qualified_name (identifier)))
+  (record_declaration
+    (doc_comment)
+    name: (identifier)
+    body: (record_body
+      (field
+        (doc_comment)
+        ordinal: (ordinal)
+        name: (identifier)
+        type: (type name: (qualified_name (identifier))))))
+  (enum_declaration
+    (doc_comment)
+    name: (identifier)
+    body: (enum_body
+      (enum_value
+        (doc_comment)
+        ordinal: (ordinal)
+        name: (identifier))))
+  (union_declaration
+    (doc_comment)
+    name: (identifier)
+    (union_member
+      (doc_comment)
+      ordinal: (ordinal)
+      type: (type name: (qualified_name (identifier))))
+    (union_member
+      (doc_comment)
+      ordinal: (ordinal)
+      type: (type name: (qualified_name (identifier)))))
+  (alias_declaration
+    (doc_comment)
+    name: (identifier)
+    type: (type name: (qualified_name (identifier)))))
+
+==================
+two doc lines
+==================
+
+namespace a
+
+/// First line.
+/// Second line.
+record R {}
+
+---
+
+(source_file
+  (namespace_declaration name: (qualified_name (identifier)))
+  (record_declaration
+    (doc_comment)
+    (doc_comment)
+    name: (identifier)
+    body: (record_body)))
+
+==================
+plain comments are extras
+==================
+
+// leading line
+namespace a // after namespace
+
+/* block between */
+record R { // after brace
+  #1 x: /* inside field */ int32
+  /* before close */
+}
+// trailing
+
+---
+
+(source_file
+  (comment)
+  (namespace_declaration name: (qualified_name (identifier)))
+  (comment)
+  (comment)
+  (record_declaration
+    name: (identifier)
+    body: (record_body
+      (comment)
+      (field
+        ordinal: (ordinal)
+        name: (identifier)
+        (comment)
+        type: (type name: (qualified_name (identifier))))
+      (comment)))
+  (comment))
+
+==================
+doc comment where none is allowed
+==================
+
+namespace a
+
+record R {
+  #1 x: int32
+  /// stray in body
+}
+
+/// stray at end
+
+---
+
+(source_file
+  (namespace_declaration name: (qualified_name (identifier)))
+  (record_declaration
+    name: (identifier)
+    body: (record_body
+      (field
+        ordinal: (ordinal)
+        name: (identifier)
+        type: (type name: (qualified_name (identifier))))
+      (comment)))
+  (comment))
+
+==================
+block comment with stars
+==================
+
+namespace a
+
+/** a **/
+/* a * b */
+record R {}
+
+---
+
+(source_file
+  (namespace_declaration name: (qualified_name (identifier)))
+  (comment)
+  (comment)
+  (record_declaration
+    name: (identifier)
+    body: (record_body)))
+
+==================
+doc comment last in an enum
+==================
+
+namespace a
+
+enum E {
+  #1 a
+  /// stray
+}
+
+---
+
+(source_file
+  (namespace_declaration name: (qualified_name (identifier)))
+  (enum_declaration
+    name: (identifier)
+    body: (enum_body
+      (enum_value ordinal: (ordinal) name: (identifier))
+      (comment))))
