@@ -1,0 +1,30 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: The committed parser is what the grammar generates
+        run: |
+          npx tree-sitter generate
+          git diff --exit-code -- src
+      - run: npx tree-sitter test
+      - name: Check out the compiler
+        uses: actions/checkout@v4
+        with:
+          repository: msbolton/Schemata
+          ref: v0.8.0
+          path: compiler
+      - name: Parse the compiler's schema files
+        run: scripts/check-compiler-corpus compiler

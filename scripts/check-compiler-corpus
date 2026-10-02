@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+# Parses every schema file the compiler ships and tests against, and fails if any tree holds an
+# error or a missing node. Files the compiler itself rejects as syntax errors are left out.
+set -euo pipefail
+
+compiler="${1:?usage: check-compiler-corpus <path to a Schemata compiler checkout>}"
+cd "$(dirname "$0")/.."
+
+files=()
+while IFS= read -r -d '' file; do
+  files+=("$file")
+done < <(
+  # Excluded fixture groups, which the compiler rejects as syntax errors by design: the SCH0*
+  # diagnostics, and the "new" side of the SCH2503 compatibility fixture (a field with no type).
+  find "$compiler/examples" "$compiler/schemata-cli/src/test/resources" \
+    -name '*.schemata' \
+    -not -path '*/diagnostics/SCH0*' \
+    -not -path '*/diagnostics/SCH2503/new/*' \
+    -print0 | sort -z
+)
+
+if [ "${#files[@]}" -lt 100 ]; then
+  echo "found only ${#files[@]} schema files under $compiler; expected well over 100" >&2
+  exit 1
+fi
+
+failed=0
+for file in "${files[@]}"; do
+  if ! npx tree-sitter parse --quiet "$file" > /dev/null 2>&1; then
+    echo "does not parse cleanly: ${file#"$compiler"/}"
+    failed=$((failed + 1))
+  fi
+done
+
+echo "${#files[@]} files, $failed with errors"
+[ "$failed" -eq 0 ]

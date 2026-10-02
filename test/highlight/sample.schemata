@@ -1,0 +1,50 @@
+/// Orders.
+// <- comment.documentation
+namespace shop.orders
+// <- keyword
+//        ^ module
+
+import shop.customers as cust
+// <- keyword
+//                    ^ keyword
+//                       ^ module
+
+alias Money = decimal(19, 4)
+// <- keyword
+//    ^ type
+//            ^ type.builtin
+//                    ^ number
+
+enum Status { #1 pending, #2 paid }
+// <- keyword
+//   ^ type
+//            ^ constant
+//               ^ constant
+
+record Order {
+// <- keyword
+//     ^ type
+  @sql(key) #1 id: uuid
+// ^ attribute
+//          ^ constant
+//             ^ property
+//                 ^ type.builtin
+  #2 who: cust.Customer
+//   ^ property
+//             ^ type
+  #3 status: Status = pending
+//           ^ type
+//                    ^ constant
+  #4 date: date
+//   ^ property
+//         ^ type.builtin
+  #5 note: string(max = 500)? // trailing
+//                ^ property
+//                      ^ number
+//                            ^ comment
+  #6 ok: bool = true
+//              ^ boolean
+  reserved #7, "legacy"
+// ^ keyword
+//             ^ string
+}
