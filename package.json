@@ -1,6 +1,6 @@
 {
   "name": "tree-sitter-schemata",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Schemata grammar for tree-sitter",
   "license": "Apache-2.0",
   "repository": { "type": "git", "url": "https://github.com/msbolton/tree-sitter-schemata.git" },

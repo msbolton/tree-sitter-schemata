@@ -28,10 +28,12 @@ module.exports = grammar({
   ],
 
   rules: {
+    // The namespace line is optional here although the compiler requires it: a file whose first
+    // line is missing or mistyped still parses its declarations, so it keeps its highlighting while
+    // the server reports the missing namespace. Leading docs and annotations belong to the
+    // namespace only when one follows; otherwise they lead the first declaration.
     source_file: $ => seq(
-      optional($._docs),
-      optional($._annotations),
-      $.namespace_declaration,
+      optional(seq(optional($._docs), optional($._annotations), $.namespace_declaration)),
       repeat($.import_declaration),
       repeat(choice($._declaration, $.future_declaration)),
       optional($._stray_docs),

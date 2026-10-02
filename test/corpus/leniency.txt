@@ -1,0 +1,92 @@
+==================
+an empty file
+==================
+
+---
+
+(source_file)
+
+==================
+a file holding only a comment
+==================
+
+// nothing here yet
+
+---
+
+(source_file
+  (comment))
+
+==================
+declarations with no namespace line
+==================
+
+record R {
+  #1 a: string
+}
+
+enum E {
+  #1 v
+}
+
+---
+
+(source_file
+  (record_declaration
+    name: (identifier)
+    body: (record_body
+      (field
+        ordinal: (ordinal)
+        name: (identifier)
+        type: (type name: (qualified_name (identifier))))))
+  (enum_declaration
+    name: (identifier)
+    body: (enum_body
+      (enum_value
+        ordinal: (ordinal)
+        name: (identifier)))))
+
+==================
+a mistyped namespace keyword stays local to its line
+==================
+
+namespac shop
+
+record R {
+  #1 a: string
+}
+
+---
+
+(source_file
+  (ERROR (identifier) (identifier))
+  (record_declaration
+    name: (identifier)
+    body: (record_body
+      (field
+        ordinal: (ordinal)
+        name: (identifier)
+        type: (type name: (qualified_name (identifier)))))))
+
+==================
+a doc comment and annotation lead the first record when there is no namespace
+==================
+
+/// The first record.
+@deprecated
+record R {
+  #1 a: string
+}
+
+---
+
+(source_file
+  (record_declaration
+    (doc_comment)
+    (annotation name: (identifier))
+    name: (identifier)
+    body: (record_body
+      (field
+        ordinal: (ordinal)
+        name: (identifier)
+        type: (type name: (qualified_name (identifier)))))))
