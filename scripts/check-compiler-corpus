@@ -1,17 +1,20 @@
 #!/usr/bin/env bash
 # Parses every schema file the compiler ships and tests against, and fails if any tree holds an
-# error or a missing node. Files the compiler itself rejects as syntax errors are left out.
+# error or a missing node, or if the number of doc_comment nodes differs from the number of lines
+# that begin with `///` (in a file the compiler accepts, each of those is a doc comment).
 set -euo pipefail
 
 compiler="${1:?usage: check-compiler-corpus <path to a Schemata compiler checkout>}"
+compiler="$(cd "$compiler" && pwd)"
 cd "$(dirname "$0")/.."
 
 files=()
 while IFS= read -r -d '' file; do
   files+=("$file")
 done < <(
-  # Excluded fixture groups, which the compiler rejects as syntax errors by design: the SCH0*
-  # diagnostics, and the "new" side of the SCH2503 compatibility fixture (a field with no type).
+  # Excluded fixture groups: the SCH0* fixtures cover the syntax and lexical diagnostics of the
+  # compiler (not all of them are parse errors here, but none is a valid file), and the new side of
+  # the SCH2503 compatibility fixture is a field with no type.
   find "$compiler/examples" "$compiler/schemata-cli/src/test/resources" \
     -name '*.schemata' \
     -not -path '*/diagnostics/SCH0*' \
@@ -26,8 +29,15 @@ fi
 
 failed=0
 for file in "${files[@]}"; do
-  if ! npx tree-sitter parse --quiet "$file" > /dev/null 2>&1; then
+  if ! tree="$(npx tree-sitter parse "$file" 2>/dev/null)"; then
     echo "does not parse cleanly: ${file#"$compiler"/}"
+    failed=$((failed + 1))
+    continue
+  fi
+  slashes="$(grep -c '^[[:space:]]*///' "$file" || true)"
+  docs="$(grep -c '(doc_comment' <<< "$tree" || true)"
+  if [ "$slashes" -ne "$docs" ]; then
+    echo "doc comments differ: ${file#"$compiler"/} has $slashes lines starting with /// but $docs doc_comment nodes"
     failed=$((failed + 1))
   fi
 done

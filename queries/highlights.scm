@@ -1,3 +1,4 @@
+; Sibling of languages/schemata/highlights.scm in https://github.com/msbolton/zed-schemata; carry a fix to both.
 ; Comments
 (comment) @comment
 (doc_comment) @comment.documentation

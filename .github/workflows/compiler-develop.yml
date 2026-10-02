@@ -1,0 +1,27 @@
+name: compiler-develop
+
+# Checks the grammar against the compiler's develop branch, so a syntax change there shows up
+# here. Separate from ci.yml so that it never blocks a push.
+on:
+  schedule:
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+
+jobs:
+  corpus:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Check out the compiler
+        uses: actions/checkout@v4
+        with:
+          repository: msbolton/Schemata
+          ref: develop
+          path: compiler
+      - name: Parse the compiler's schema files
+        run: scripts/check-compiler-corpus compiler
