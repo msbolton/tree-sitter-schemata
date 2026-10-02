@@ -185,3 +185,133 @@ enum E {
     body: (enum_body
       (enum_value ordinal: (ordinal) name: (identifier))
       (comment))))
+
+==================
+doc comments on consecutive fields
+==================
+
+namespace a
+
+record R {
+  /// a
+  #1 x: int32
+  /// b
+  #2 y: int32
+}
+
+---
+
+(source_file
+  (namespace_declaration name: (qualified_name (identifier)))
+  (record_declaration
+    name: (identifier)
+    body: (record_body
+      (field
+        (doc_comment)
+        ordinal: (ordinal)
+        name: (identifier)
+        type: (type name: (qualified_name (identifier))))
+      (field
+        (doc_comment)
+        ordinal: (ordinal)
+        name: (identifier)
+        type: (type name: (qualified_name (identifier)))))))
+
+==================
+doc comment on a nested record before another field
+==================
+
+namespace a
+
+record R {
+  /// inner
+  record Inner {}
+  #1 y: int32
+}
+
+---
+
+(source_file
+  (namespace_declaration name: (qualified_name (identifier)))
+  (record_declaration
+    name: (identifier)
+    body: (record_body
+      (record_declaration
+        (doc_comment)
+        name: (identifier)
+        body: (record_body))
+      (field
+        ordinal: (ordinal)
+        name: (identifier)
+        type: (type name: (qualified_name (identifier)))))))
+
+==================
+doc comment on a last nested record and a stray after it
+==================
+
+namespace a
+
+record R {
+  /// inner
+  record Inner {}
+  /// stray
+}
+
+---
+
+(source_file
+  (namespace_declaration name: (qualified_name (identifier)))
+  (record_declaration
+    name: (identifier)
+    body: (record_body
+      (record_declaration
+        (doc_comment)
+        name: (identifier)
+        body: (record_body))
+      (comment))))
+
+==================
+doc comment last in the file after a union
+==================
+
+namespace a
+
+union U = #1 A | #2 B
+/// stray
+
+---
+
+(source_file
+  (namespace_declaration name: (qualified_name (identifier)))
+  (union_declaration
+    name: (identifier)
+    (union_member ordinal: (ordinal) type: (type name: (qualified_name (identifier))))
+    (union_member ordinal: (ordinal) type: (type name: (qualified_name (identifier)))))
+  (comment))
+
+==================
+doc comment on a second enum value before reserved
+==================
+
+namespace a
+
+enum E {
+  #1 a
+  /// second
+  #2 b
+  reserved #3
+}
+
+---
+
+(source_file
+  (namespace_declaration name: (qualified_name (identifier)))
+  (enum_declaration
+    name: (identifier)
+    body: (enum_body
+      (enum_value ordinal: (ordinal) name: (identifier))
+      (enum_value
+        (doc_comment)
+        ordinal: (ordinal)
+        name: (identifier))
+      (reserved_statement (ordinal)))))

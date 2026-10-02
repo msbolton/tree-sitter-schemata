@@ -151,9 +151,9 @@ module.exports = grammar({
       optional($.block),
     ),
 
-    block: $ => seq('{', repeat(choice($.block, $._block_text)), '}'),
+    block: $ => seq('{', repeat(choice($.block, $.string, $._block_text)), '}'),
 
-    _block_text: _ => token(prec(-1, /[^{}\s]+/)),
+    _block_text: _ => token(prec(-1, /[^{}"\s]+/)),
 
     type: $ => seq(
       field('name', $.qualified_name),

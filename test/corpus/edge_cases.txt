@@ -118,3 +118,19 @@ namespace a record R { #1 x: int32 } enum E { #1 a }
     name: (identifier)
     body: (enum_body
       (enum_value ordinal: (ordinal) name: (identifier)))))
+
+==================
+a string with a brace inside a future block
+==================
+
+namespace a
+
+service S { "}" { "{" } }
+
+---
+
+(source_file
+  (namespace_declaration name: (qualified_name (identifier)))
+  (future_declaration
+    (identifier)
+    (block (string) (block (string)))))
