@@ -22,8 +22,11 @@ module.exports = grammar({
   word: $ => $.identifier,
 
   conflicts: $ => [
-    [$.source_file, $.record_declaration, $.enum_declaration, $.union_declaration, $.alias_declaration],
+    [$.source_file, $.record_declaration, $.enum_declaration, $.union_declaration, $.alias_declaration, $.service_declaration],
     [$.enum_body, $.enum_value],
+    // An identifier after an operation's signature is a binding verb or the next operation's
+    // name; the token after it (a string or `(`) decides.
+    [$.operation],
     [$.record_declaration, $.record_body, $.field, $.enum_declaration, $.union_declaration, $.alias_declaration],
   ],
 
@@ -35,7 +38,7 @@ module.exports = grammar({
     source_file: $ => seq(
       optional(seq(optional($._docs), optional($._annotations), $.namespace_declaration)),
       repeat($.import_declaration),
-      repeat(choice($._declaration, $.future_declaration)),
+      repeat(choice($._declaration, $.service_declaration, $.future_declaration)),
       optional($._stray_docs),
     ),
 
@@ -145,10 +148,43 @@ module.exports = grammar({
 
     ordinal_range: $ => seq($.ordinal, '..', $.ordinal),
 
-    // `service`, `operation`, and `stream` are reserved for a later version of the language; the
-    // body is skipped as balanced braces.
+    service_declaration: $ => seq(
+      optional($._docs),
+      optional($._annotations),
+      'service',
+      field('name', $.identifier),
+      field('body', $.service_body),
+    ),
+
+    service_body: $ => seq(
+      '{',
+      repeat(choice($.operation, $.reserved_statement)),
+      optional($._stray_docs),
+      '}',
+    ),
+
+    operation: $ => seq(
+      optional($._docs),
+      optional($._annotations),
+      optional(field('ordinal', $.ordinal)),
+      field('name', $.identifier),
+      '(',
+      optional(field('request', $.payload)),
+      ')',
+      optional(seq(':', field('response', $.payload))),
+      optional(field('binding', $.http_binding)),
+    ),
+
+    payload: $ => seq(optional('stream'), field('type', $.type)),
+
+    // The verb is an identifier rather than a keyword, so `get` and `post` stay legal names
+    // elsewhere; the compiler checks it against the HTTP methods.
+    http_binding: $ => seq(field('verb', $.identifier), field('path', $.string)),
+
+    // `operation` and `stream` are reserved for a later version of the language at the top level;
+    // the body is skipped as balanced braces.
     future_declaration: $ => seq(
-      choice('service', 'operation', 'stream'),
+      choice('operation', 'stream'),
       optional($.identifier),
       optional($.block),
     ),

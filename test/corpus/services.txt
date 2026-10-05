@@ -1,0 +1,202 @@
+==================
+service with operations and bindings
+==================
+
+namespace shop.orders
+
+/// Place and read orders.
+@deprecated
+service Orders {
+  /// Fetch one order.
+  @idempotent
+  #1 get(OrderId): Order  get "/orders/{id}"
+  #2 list(ListOrders): stream Order  get "/orders"
+  #4 cancel(OrderId)  delete "/orders/{id}"
+  #5 upload(stream Chunk): Receipt
+  reserved #6, "archive"
+}
+
+---
+
+(source_file
+  (namespace_declaration name: (qualified_name (identifier) (identifier)))
+  (service_declaration
+    (doc_comment)
+    (annotation name: (identifier))
+    name: (identifier)
+    body: (service_body
+      (operation
+        (doc_comment)
+        (annotation name: (identifier))
+        ordinal: (ordinal)
+        name: (identifier)
+        request: (payload type: (type name: (qualified_name (identifier))))
+        response: (payload type: (type name: (qualified_name (identifier))))
+        binding: (http_binding verb: (identifier) path: (string)))
+      (operation
+        ordinal: (ordinal)
+        name: (identifier)
+        request: (payload type: (type name: (qualified_name (identifier))))
+        response: (payload type: (type name: (qualified_name (identifier))))
+        binding: (http_binding verb: (identifier) path: (string)))
+      (operation
+        ordinal: (ordinal)
+        name: (identifier)
+        request: (payload type: (type name: (qualified_name (identifier))))
+        binding: (http_binding verb: (identifier) path: (string)))
+      (operation
+        ordinal: (ordinal)
+        name: (identifier)
+        request: (payload type: (type name: (qualified_name (identifier))))
+        response: (payload type: (type name: (qualified_name (identifier)))))
+      (reserved_statement (ordinal) (string)))))
+
+==================
+operations without ordinals, requests, or responses
+==================
+
+namespace a
+
+service Health {
+  ping()
+  status(): shop.Status?
+  watch(): stream Event  get "/events"
+}
+
+---
+
+(source_file
+  (namespace_declaration name: (qualified_name (identifier)))
+  (service_declaration
+    name: (identifier)
+    body: (service_body
+      (operation name: (identifier))
+      (operation
+        name: (identifier)
+        response: (payload type: (type name: (qualified_name (identifier) (identifier)))))
+      (operation
+        name: (identifier)
+        response: (payload type: (type name: (qualified_name (identifier))))
+        binding: (http_binding verb: (identifier) path: (string))))))
+
+==================
+a verb followed by an operation of the same name
+==================
+
+namespace a
+
+service S {
+  a(): A get "/a"
+  get(): B
+  post() post "/post"
+  b(X)
+  get(Y)
+}
+
+---
+
+(source_file
+  (namespace_declaration name: (qualified_name (identifier)))
+  (service_declaration
+    name: (identifier)
+    body: (service_body
+      (operation
+        name: (identifier)
+        response: (payload type: (type name: (qualified_name (identifier))))
+        binding: (http_binding verb: (identifier) path: (string)))
+      (operation
+        name: (identifier)
+        response: (payload type: (type name: (qualified_name (identifier)))))
+      (operation
+        name: (identifier)
+        binding: (http_binding verb: (identifier) path: (string)))
+      (operation
+        name: (identifier)
+        request: (payload type: (type name: (qualified_name (identifier)))))
+      (operation
+        name: (identifier)
+        request: (payload type: (type name: (qualified_name (identifier))))))))
+
+==================
+empty service and a trailing doc comment
+==================
+
+namespace a
+
+service Empty {
+  /// Nothing follows.
+}
+record After { #1 x: int32 }
+
+---
+
+(source_file
+  (namespace_declaration name: (qualified_name (identifier)))
+  (service_declaration
+    name: (identifier)
+    body: (service_body (comment)))
+  (record_declaration
+    name: (identifier)
+    body: (record_body
+      (field
+        ordinal: (ordinal)
+        name: (identifier)
+        type: (type name: (qualified_name (identifier)))))))
+
+==================
+verbs and keyword-adjacent words stay legal names
+==================
+
+namespace a
+
+record Verbs {
+  #1 get: string
+  #2 post: int32
+  #3 delete: get
+  #4 services: string
+  #5 streaming: bool
+  #6 operations: list<string>
+}
+
+enum Method { get, put, service_level }
+
+---
+
+(source_file
+  (namespace_declaration name: (qualified_name (identifier)))
+  (record_declaration
+    name: (identifier)
+    body: (record_body
+      (field
+        ordinal: (ordinal)
+        name: (identifier)
+        type: (type name: (qualified_name (identifier))))
+      (field
+        ordinal: (ordinal)
+        name: (identifier)
+        type: (type name: (qualified_name (identifier))))
+      (field
+        ordinal: (ordinal)
+        name: (identifier)
+        type: (type name: (qualified_name (identifier))))
+      (field
+        ordinal: (ordinal)
+        name: (identifier)
+        type: (type name: (qualified_name (identifier))))
+      (field
+        ordinal: (ordinal)
+        name: (identifier)
+        type: (type name: (qualified_name (identifier))))
+      (field
+        ordinal: (ordinal)
+        name: (identifier)
+        type: (type
+          name: (qualified_name (identifier))
+          arguments: (type_arguments
+            (type name: (qualified_name (identifier))))))))
+  (enum_declaration
+    name: (identifier)
+    body: (enum_body
+      (enum_value name: (identifier))
+      (enum_value name: (identifier))
+      (enum_value name: (identifier)))))

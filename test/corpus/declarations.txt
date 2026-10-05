@@ -141,7 +141,7 @@ future declarations
 
 namespace a
 
-service Orders { operation place(o: Order) { nested } }
+operation place { o: Order { nested } }
 stream Events
 
 ---

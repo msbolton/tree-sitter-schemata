@@ -48,3 +48,19 @@ record Order {
 // ^ keyword
 //             ^ string
 }
+
+service Orders {
+// <- keyword
+//      ^ type
+  #1 get(OrderId): Order  get "/orders/{id}"
+// ^ constant
+//   ^ function
+//       ^ type
+//                 ^ type
+//                        ^ keyword
+//                            ^ string
+  #2 upload(stream Chunk): stream Receipt
+//          ^ keyword
+//                 ^ type
+//                         ^ keyword
+}

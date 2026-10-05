@@ -38,6 +38,11 @@
 (alias_declaration name: (identifier) @type)
 (field name: (identifier) @property)
 (enum_value name: (identifier) @constant)
+(service_declaration name: (identifier) @type)
+(operation name: (identifier) @function)
+
+; HTTP bindings
+(http_binding verb: (identifier) @keyword)
 
 ; Type references
 (type name: (qualified_name (identifier) @type))

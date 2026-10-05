@@ -125,7 +125,7 @@ a string with a brace inside a future block
 
 namespace a
 
-service S { "}" { "{" } }
+operation S { "}" { "{" } }
 
 ---
 

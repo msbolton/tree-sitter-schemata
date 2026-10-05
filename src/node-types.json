@@ -334,6 +334,32 @@
     }
   },
   {
+    "type": "http_binding",
+    "named": true,
+    "fields": {
+      "path": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "string",
+            "named": true
+          }
+        ]
+      },
+      "verb": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "import_declaration",
     "named": true,
     "fields": {
@@ -391,6 +417,76 @@
     }
   },
   {
+    "type": "operation",
+    "named": true,
+    "fields": {
+      "binding": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "http_binding",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "ordinal": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "ordinal",
+            "named": true
+          }
+        ]
+      },
+      "request": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "payload",
+            "named": true
+          }
+        ]
+      },
+      "response": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "payload",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "annotation",
+          "named": true
+        },
+        {
+          "type": "doc_comment",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "ordinal_range",
     "named": true,
     "fields": {},
@@ -403,6 +499,22 @@
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "payload",
+    "named": true,
+    "fields": {
+      "type": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "type",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -580,6 +692,69 @@
     }
   },
   {
+    "type": "service_body",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "comment",
+          "named": true
+        },
+        {
+          "type": "operation",
+          "named": true
+        },
+        {
+          "type": "reserved_statement",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "service_declaration",
+    "named": true,
+    "fields": {
+      "body": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "service_body",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "annotation",
+          "named": true
+        },
+        {
+          "type": "doc_comment",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "source_file",
     "named": true,
     "root": true,
@@ -622,6 +797,10 @@
         },
         {
           "type": "record_declaration",
+          "named": true
+        },
+        {
+          "type": "service_declaration",
           "named": true
         },
         {
