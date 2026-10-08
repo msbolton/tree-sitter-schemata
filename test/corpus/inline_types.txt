@@ -1,0 +1,178 @@
+==================
+inline enum and shape
+==================
+
+schema a
+
+model Order {
+  status   enum { pending paid } = pending
+  shipping { street string { max 200 }  city string }
+}
+
+---
+
+(source_file
+  (schema_declaration
+    name: (qualified_name
+      (identifier)))
+  (model_declaration
+    name: (identifier)
+    body: (model_body
+      (field
+        name: (identifier)
+        type: (inline_enum
+          body: (enum_body
+            (enum_value
+              name: (identifier))
+            (enum_value
+              name: (identifier))))
+        default: (identifier))
+      (field
+        name: (identifier)
+        type: (inline_shape
+          body: (model_body
+            (field
+              name: (identifier)
+              type: (type
+                name: (qualified_name
+                  (identifier)))
+              options: (option_block
+                (option
+                  name: (identifier)
+                  value: (integer))))
+            (field
+              name: (identifier)
+              type: (type
+                name: (qualified_name
+                  (identifier))))))))))
+
+==================
+inline types as lists and nullable
+==================
+
+schema a
+
+model M {
+  tags   enum { a b }[]
+  maybe  enum { a, b }?[]?
+  points { x int32  y int32 }[] { minItems 1 }
+  extra  { note string }?
+}
+
+---
+
+(source_file
+  (schema_declaration
+    name: (qualified_name
+      (identifier)))
+  (model_declaration
+    name: (identifier)
+    body: (model_body
+      (field
+        name: (identifier)
+        type: (inline_enum
+          body: (enum_body
+            (enum_value
+              name: (identifier))
+            (enum_value
+              name: (identifier)))
+          (list_suffix)))
+      (field
+        name: (identifier)
+        type: (inline_enum
+          body: (enum_body
+            (enum_value
+              name: (identifier))
+            (enum_value
+              name: (identifier)))
+          (nullable)
+          (list_suffix
+            (nullable))))
+      (field
+        name: (identifier)
+        type: (inline_shape
+          body: (model_body
+            (field
+              name: (identifier)
+              type: (type
+                name: (qualified_name
+                  (identifier))))
+            (field
+              name: (identifier)
+              type: (type
+                name: (qualified_name
+                  (identifier)))))
+          (list_suffix))
+        options: (option_block
+          (option
+            name: (identifier)
+            value: (integer))))
+      (field
+        name: (identifier)
+        type: (inline_shape
+          body: (model_body
+            (field
+              name: (identifier)
+              type: (type
+                name: (qualified_name
+                  (identifier)))))
+          (nullable))))))
+
+==================
+an inline shape with nested members, reserved, and block attributes
+==================
+
+schema a
+
+model M {
+  s {
+    a int32
+    b int32
+    reserved #9
+    enum Kind { x y }
+    @@unique(a, b)
+  } @deprecated("x")
+}
+
+---
+
+(source_file
+  (schema_declaration
+    name: (qualified_name
+      (identifier)))
+  (model_declaration
+    name: (identifier)
+    body: (model_body
+      (field
+        name: (identifier)
+        type: (inline_shape
+          body: (model_body
+            (field
+              name: (identifier)
+              type: (type
+                name: (qualified_name
+                  (identifier))))
+            (field
+              name: (identifier)
+              type: (type
+                name: (qualified_name
+                  (identifier))))
+            (reserved_statement
+              (ordinal))
+            (enum_declaration
+              name: (identifier)
+              body: (enum_body
+                (enum_value
+                  name: (identifier))
+                (enum_value
+                  name: (identifier))))
+            (block_attribute
+              name: (identifier)
+              (attribute_argument
+                value: (identifier))
+              (attribute_argument
+                value: (identifier)))))
+        (attribute
+          name: (identifier)
+          (attribute_argument
+            value: (string)))))))

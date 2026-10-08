@@ -1,8 +1,11 @@
 /// Orders.
 // <- comment.documentation
-namespace shop.orders
+schema shop.orders @sql(schema: "shop")
 // <- keyword
-//        ^ module
+//     ^ module
+//                 ^ attribute
+//                      ^ property
+//                              ^ string
 
 import shop.customers as cust
 // <- keyword
@@ -15,38 +18,59 @@ alias Money = decimal(19, 4)
 //            ^ type.builtin
 //                    ^ number
 
-enum Status { #1 pending, #2 paid }
+enum Status { pending paid }
 // <- keyword
 //   ^ type
 //            ^ constant
-//               ^ constant
-
-record Order {
-// <- keyword
-//     ^ type
-  @sql(key) #1 id: uuid
-// ^ attribute
-//          ^ constant
-//             ^ property
-//                 ^ type.builtin
-  #2 who: cust.Customer
-//   ^ property
-//             ^ type
-  #3 status: Status = pending
-//           ^ type
 //                    ^ constant
-  #4 date: date
+
+/// An order.
+model Order {
+// <- keyword
+//    ^ type
+  #1 id uuid { id }
+// ^ constant
 //   ^ property
-//         ^ type.builtin
-  #5 note: string(max = 500)? // trailing
-//                ^ property
+//      ^ type.builtin
+//             ^ property
+  #2 who cust.Customer @relation(onDelete: cascade)
+//   ^ property
+//            ^ type
+//                     ^ attribute
+//                      ^ attribute
+//                               ^ property
+//                                         ^ constant
+  #3 status Status = pending
+//          ^ type
+//                   ^ constant
+  #4 date date
+//   ^ property
+//        ^ type.builtin
+  #5 note string? { max 500 } // trailing
+//              ^ operator
+//                  ^ property
 //                      ^ number
-//                            ^ comment
-  #6 ok: bool = true
-//              ^ boolean
-  reserved #7, "legacy"
+//                              ^ comment
+  #6 ok bool = true
+//             ^ boolean
+  #7 lines Line[] { minItems 1 }
+//              ^ punctuation.bracket
+//                  ^ property
+  #8 kind enum { a b }
+//        ^ keyword
+//               ^ constant
+  reserved #9, "legacy"
 // ^ keyword
 //             ^ string
+
+  model Line { sku string }
+//^ keyword
+//      ^ type
+
+  @@index(who, status)
+//^ attribute
+//  ^ attribute
+//        ^ property
 }
 
 service Orders {

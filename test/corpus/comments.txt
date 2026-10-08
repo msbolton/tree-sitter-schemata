@@ -2,13 +2,13 @@
 doc comments attach to elements
 ==================
 
-/// Namespace doc.
-namespace a
+/// Schema doc.
+schema a
 
-/// Record doc.
-record R {
+/// Model doc.
+model R {
   /// Field doc.
-  #1 x: int32
+  #1 x int32
 }
 
 /// Enum doc.
@@ -31,16 +31,20 @@ alias M = int32
 
 (source_file
   (doc_comment)
-  (namespace_declaration name: (qualified_name (identifier)))
-  (record_declaration
+  (schema_declaration
+    name: (qualified_name
+      (identifier)))
+  (model_declaration
     (doc_comment)
     name: (identifier)
-    body: (record_body
+    body: (model_body
       (field
         (doc_comment)
         ordinal: (ordinal)
         name: (identifier)
-        type: (type name: (qualified_name (identifier))))))
+        type: (type
+          name: (qualified_name
+            (identifier))))))
   (enum_declaration
     (doc_comment)
     name: (identifier)
@@ -55,46 +59,54 @@ alias M = int32
     (union_member
       (doc_comment)
       ordinal: (ordinal)
-      type: (type name: (qualified_name (identifier))))
+      type: (type
+        name: (qualified_name
+          (identifier))))
     (union_member
       (doc_comment)
       ordinal: (ordinal)
-      type: (type name: (qualified_name (identifier)))))
+      type: (type
+        name: (qualified_name
+          (identifier)))))
   (alias_declaration
     (doc_comment)
     name: (identifier)
-    type: (type name: (qualified_name (identifier)))))
+    type: (type
+      name: (qualified_name
+        (identifier)))))
 
 ==================
 two doc lines
 ==================
 
-namespace a
+schema a
 
 /// First line.
 /// Second line.
-record R {}
+model R {}
 
 ---
 
 (source_file
-  (namespace_declaration name: (qualified_name (identifier)))
-  (record_declaration
+  (schema_declaration
+    name: (qualified_name
+      (identifier)))
+  (model_declaration
     (doc_comment)
     (doc_comment)
     name: (identifier)
-    body: (record_body)))
+    body: (model_body)))
 
 ==================
 plain comments are extras
 ==================
 
 // leading line
-namespace a // after namespace
+schema a // after schema
 
 /* block between */
-record R { // after brace
-  #1 x: /* inside field */ int32
+model R { // after brace
+  #1 x /* inside field */ int32
   /* before close */
 }
 // trailing
@@ -103,18 +115,22 @@ record R { // after brace
 
 (source_file
   (comment)
-  (namespace_declaration name: (qualified_name (identifier)))
+  (schema_declaration
+    name: (qualified_name
+      (identifier)))
   (comment)
   (comment)
-  (record_declaration
+  (model_declaration
     name: (identifier)
-    body: (record_body
+    body: (model_body
       (comment)
       (field
         ordinal: (ordinal)
         name: (identifier)
         (comment)
-        type: (type name: (qualified_name (identifier))))
+        type: (type
+          name: (qualified_name
+            (identifier))))
       (comment)))
   (comment))
 
@@ -122,10 +138,10 @@ record R { // after brace
 doc comment where none is allowed
 ==================
 
-namespace a
+schema a
 
-record R {
-  #1 x: int32
+model R {
+  #1 x int32
   /// stray in body
 }
 
@@ -134,14 +150,18 @@ record R {
 ---
 
 (source_file
-  (namespace_declaration name: (qualified_name (identifier)))
-  (record_declaration
+  (schema_declaration
+    name: (qualified_name
+      (identifier)))
+  (model_declaration
     name: (identifier)
-    body: (record_body
+    body: (model_body
       (field
         ordinal: (ordinal)
         name: (identifier)
-        type: (type name: (qualified_name (identifier))))
+        type: (type
+          name: (qualified_name
+            (identifier))))
       (comment)))
   (comment))
 
@@ -149,151 +169,173 @@ record R {
 block comment with stars
 ==================
 
-namespace a
+schema a
 
 /** a **/
 /* a * b */
-record R {}
+model R {}
 
 ---
 
 (source_file
-  (namespace_declaration name: (qualified_name (identifier)))
+  (schema_declaration
+    name: (qualified_name
+      (identifier)))
   (comment)
   (comment)
-  (record_declaration
+  (model_declaration
     name: (identifier)
-    body: (record_body)))
+    body: (model_body)))
 
 ==================
 doc comment last in an enum
 ==================
 
-namespace a
+schema a
 
 enum E {
-  #1 a
+  a
   /// stray
 }
 
 ---
 
 (source_file
-  (namespace_declaration name: (qualified_name (identifier)))
+  (schema_declaration
+    name: (qualified_name
+      (identifier)))
   (enum_declaration
     name: (identifier)
     body: (enum_body
-      (enum_value ordinal: (ordinal) name: (identifier))
+      (enum_value
+        name: (identifier))
       (comment))))
 
 ==================
 doc comments on consecutive fields
 ==================
 
-namespace a
+schema a
 
-record R {
+model R {
   /// a
-  #1 x: int32
+  x int32
   /// b
-  #2 y: int32
+  y int32
 }
 
 ---
 
 (source_file
-  (namespace_declaration name: (qualified_name (identifier)))
-  (record_declaration
+  (schema_declaration
+    name: (qualified_name
+      (identifier)))
+  (model_declaration
     name: (identifier)
-    body: (record_body
+    body: (model_body
       (field
         (doc_comment)
-        ordinal: (ordinal)
         name: (identifier)
-        type: (type name: (qualified_name (identifier))))
+        type: (type
+          name: (qualified_name
+            (identifier))))
       (field
         (doc_comment)
-        ordinal: (ordinal)
         name: (identifier)
-        type: (type name: (qualified_name (identifier)))))))
+        type: (type
+          name: (qualified_name
+            (identifier)))))))
 
 ==================
-doc comment on a nested record before another field
+doc comment on a nested model before another field
 ==================
 
-namespace a
+schema a
 
-record R {
+model R {
   /// inner
-  record Inner {}
-  #1 y: int32
+  model Inner {}
+  y int32
 }
 
 ---
 
 (source_file
-  (namespace_declaration name: (qualified_name (identifier)))
-  (record_declaration
+  (schema_declaration
+    name: (qualified_name
+      (identifier)))
+  (model_declaration
     name: (identifier)
-    body: (record_body
-      (record_declaration
+    body: (model_body
+      (model_declaration
         (doc_comment)
         name: (identifier)
-        body: (record_body))
+        body: (model_body))
       (field
-        ordinal: (ordinal)
         name: (identifier)
-        type: (type name: (qualified_name (identifier)))))))
+        type: (type
+          name: (qualified_name
+            (identifier)))))))
 
 ==================
-doc comment on a last nested record and a stray after it
+doc comment on a last nested model and a stray after it
 ==================
 
-namespace a
+schema a
 
-record R {
+model R {
   /// inner
-  record Inner {}
+  model Inner {}
   /// stray
 }
 
 ---
 
 (source_file
-  (namespace_declaration name: (qualified_name (identifier)))
-  (record_declaration
+  (schema_declaration
+    name: (qualified_name
+      (identifier)))
+  (model_declaration
     name: (identifier)
-    body: (record_body
-      (record_declaration
+    body: (model_body
+      (model_declaration
         (doc_comment)
         name: (identifier)
-        body: (record_body))
+        body: (model_body))
       (comment))))
 
 ==================
 doc comment last in the file after a union
 ==================
 
-namespace a
+schema a
 
-union U = #1 A | #2 B
+union U = A | B
 /// stray
 
 ---
 
 (source_file
-  (namespace_declaration name: (qualified_name (identifier)))
+  (schema_declaration
+    name: (qualified_name
+      (identifier)))
   (union_declaration
     name: (identifier)
-    (union_member ordinal: (ordinal) type: (type name: (qualified_name (identifier))))
-    (union_member ordinal: (ordinal) type: (type name: (qualified_name (identifier)))))
+    (union_member
+      type: (type
+        name: (qualified_name
+          (identifier))))
+    (union_member
+      type: (type
+        name: (qualified_name
+          (identifier)))))
   (comment))
 
 ==================
 doc comment on a second enum value before reserved
 ==================
 
-namespace a
+schema a
 
 enum E {
   #1 a
@@ -305,13 +347,57 @@ enum E {
 ---
 
 (source_file
-  (namespace_declaration name: (qualified_name (identifier)))
+  (schema_declaration
+    name: (qualified_name
+      (identifier)))
   (enum_declaration
     name: (identifier)
     body: (enum_body
-      (enum_value ordinal: (ordinal) name: (identifier))
+      (enum_value
+        ordinal: (ordinal)
+        name: (identifier))
       (enum_value
         (doc_comment)
         ordinal: (ordinal)
         name: (identifier))
-      (reserved_statement (ordinal)))))
+      (reserved_statement
+        (ordinal)))))
+
+==================
+a doc comment between a trailing attribute and the next field
+==================
+
+schema a
+
+model R {
+  a int32
+  @x
+  /// d
+  @y
+  b int32
+}
+
+---
+
+(source_file
+  (schema_declaration
+    name: (qualified_name
+      (identifier)))
+  (model_declaration
+    name: (identifier)
+    body: (model_body
+      (field
+        name: (identifier)
+        type: (type
+          name: (qualified_name
+            (identifier)))
+        (attribute
+          name: (identifier)))
+      (field
+        (doc_comment)
+        (attribute
+          name: (identifier))
+        name: (identifier)
+        type: (type
+          name: (qualified_name
+            (identifier)))))))

@@ -1,8 +1,8 @@
 ==================
-namespace and import
+schema and import
 ==================
 
-namespace shop.orders
+schema shop.orders
 
 import shop.customers
 import shop.customers as cust
@@ -10,109 +10,178 @@ import shop.customers as cust
 ---
 
 (source_file
-  (namespace_declaration
-    name: (qualified_name (identifier) (identifier)))
+  (schema_declaration
+    name: (qualified_name
+      (identifier)
+      (identifier)))
   (import_declaration
-    namespace: (qualified_name (identifier) (identifier)))
+    schema: (qualified_name
+      (identifier)
+      (identifier)))
   (import_declaration
-    namespace: (qualified_name (identifier) (identifier))
+    schema: (qualified_name
+      (identifier)
+      (identifier))
     alias: (identifier)))
 
 ==================
-record with fields
+model with fields
 ==================
 
-namespace a
+schema a
 
-record Order {
-  #1 id: uuid
-  note: string(max = 500)?
-  #3 status: Status = pending
+model Order {
+  #1 id uuid { id }
+  note string?
+  #3 status Status = pending
 }
 
 ---
 
 (source_file
-  (namespace_declaration name: (qualified_name (identifier)))
-  (record_declaration
+  (schema_declaration
+    name: (qualified_name
+      (identifier)))
+  (model_declaration
     name: (identifier)
-    body: (record_body
+    body: (model_body
       (field
         ordinal: (ordinal)
         name: (identifier)
-        type: (type name: (qualified_name (identifier))))
+        type: (type
+          name: (qualified_name
+            (identifier)))
+        options: (option_block
+          (option
+            name: (identifier))))
       (field
         name: (identifier)
         type: (type
-          name: (qualified_name (identifier))
-          refinements: (refinements
-            (refinement key: (identifier) value: (integer)))))
+          name: (qualified_name
+            (identifier))
+          (nullable)))
       (field
         ordinal: (ordinal)
         name: (identifier)
-        type: (type name: (qualified_name (identifier)))
+        type: (type
+          name: (qualified_name
+            (identifier)))
         default: (identifier)))))
 
 ==================
-nested record and reserved
+nested declarations and reserved
 ==================
 
-namespace a
+schema a
 
-record Outer {
-  #1 x: int32
+model Outer {
+  #1 x int32
   reserved #2, #5..#7, "old_name"
-  record Inner { #1 y: int32 }
+  model Inner { #1 y int32 }
+  enum Kind { a b }
+  union Either = Inner | string
+  alias Code = string { max 4 }
 }
 
 ---
 
 (source_file
-  (namespace_declaration name: (qualified_name (identifier)))
-  (record_declaration
+  (schema_declaration
+    name: (qualified_name
+      (identifier)))
+  (model_declaration
     name: (identifier)
-    body: (record_body
+    body: (model_body
       (field
         ordinal: (ordinal)
         name: (identifier)
-        type: (type name: (qualified_name (identifier))))
+        type: (type
+          name: (qualified_name
+            (identifier))))
       (reserved_statement
         (ordinal)
-        (ordinal_range (ordinal) (ordinal))
+        (ordinal_range
+          (ordinal)
+          (ordinal))
         (string))
-      (record_declaration
+      (model_declaration
         name: (identifier)
-        body: (record_body
+        body: (model_body
           (field
             ordinal: (ordinal)
             name: (identifier)
-            type: (type name: (qualified_name (identifier)))))))))
+            type: (type
+              name: (qualified_name
+                (identifier))))))
+      (enum_declaration
+        name: (identifier)
+        body: (enum_body
+          (enum_value
+            name: (identifier))
+          (enum_value
+            name: (identifier))))
+      (union_declaration
+        name: (identifier)
+        (union_member
+          type: (type
+            name: (qualified_name
+              (identifier))))
+        (union_member
+          type: (type
+            name: (qualified_name
+              (identifier)))))
+      (alias_declaration
+        name: (identifier)
+        type: (type
+          name: (qualified_name
+            (identifier)))
+        options: (option_block
+          (option
+            name: (identifier)
+            value: (integer)))))))
 
 ==================
 enum with and without commas
 ==================
 
-namespace a
+schema a
 
-enum Status { #1 pending, #2 paid #3 shipped reserved #4 }
+enum Status { pending, paid shipped }
+enum Numbered { #1 a #2 b reserved #3, "c" }
 
 ---
 
 (source_file
-  (namespace_declaration name: (qualified_name (identifier)))
+  (schema_declaration
+    name: (qualified_name
+      (identifier)))
   (enum_declaration
     name: (identifier)
     body: (enum_body
-      (enum_value ordinal: (ordinal) name: (identifier))
-      (enum_value ordinal: (ordinal) name: (identifier))
-      (enum_value ordinal: (ordinal) name: (identifier))
-      (reserved_statement (ordinal)))))
+      (enum_value
+        name: (identifier))
+      (enum_value
+        name: (identifier))
+      (enum_value
+        name: (identifier))))
+  (enum_declaration
+    name: (identifier)
+    body: (enum_body
+      (enum_value
+        ordinal: (ordinal)
+        name: (identifier))
+      (enum_value
+        ordinal: (ordinal)
+        name: (identifier))
+      (reserved_statement
+        (ordinal)
+        (string)))))
 
 ==================
 union and alias
 ==================
 
-namespace a
+schema a
 
 union Payment = #1 Card | #2 shop.BankTransfer | Cash
 
@@ -121,32 +190,53 @@ alias Money = decimal(19, 4)
 ---
 
 (source_file
-  (namespace_declaration name: (qualified_name (identifier)))
+  (schema_declaration
+    name: (qualified_name
+      (identifier)))
   (union_declaration
     name: (identifier)
-    (union_member ordinal: (ordinal) type: (type name: (qualified_name (identifier))))
-    (union_member ordinal: (ordinal) type: (type name: (qualified_name (identifier) (identifier))))
-    (union_member type: (type name: (qualified_name (identifier)))))
+    (union_member
+      ordinal: (ordinal)
+      type: (type
+        name: (qualified_name
+          (identifier))))
+    (union_member
+      ordinal: (ordinal)
+      type: (type
+        name: (qualified_name
+          (identifier)
+          (identifier))))
+    (union_member
+      type: (type
+        name: (qualified_name
+          (identifier)))))
   (alias_declaration
     name: (identifier)
     type: (type
-      name: (qualified_name (identifier))
-      refinements: (refinements
-        (refinement value: (integer))
-        (refinement value: (integer))))))
+      name: (qualified_name
+        (identifier))
+      precision: (decimal_arguments
+        (integer)
+        (integer)))))
 
 ==================
 future declarations
 ==================
 
-namespace a
+schema a
 
-operation place { o: Order { nested } }
-stream Events
+operation place { o Order { nested } }
+operation Events
 
 ---
 
 (source_file
-  (namespace_declaration name: (qualified_name (identifier)))
-  (future_declaration (identifier) (block (block)))
-  (future_declaration (identifier)))
+  (schema_declaration
+    name: (qualified_name
+      (identifier)))
+  (future_declaration
+    (identifier)
+    (block
+      (block)))
+  (future_declaration
+    (identifier)))

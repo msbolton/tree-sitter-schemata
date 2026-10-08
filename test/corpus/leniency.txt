@@ -18,75 +18,80 @@ a file holding only a comment
   (comment))
 
 ==================
-declarations with no namespace line
+declarations with no schema line
 ==================
 
-record R {
-  #1 a: string
+model R {
+  a string
 }
 
 enum E {
-  #1 v
+  v
 }
 
 ---
 
 (source_file
-  (record_declaration
+  (model_declaration
     name: (identifier)
-    body: (record_body
+    body: (model_body
       (field
-        ordinal: (ordinal)
         name: (identifier)
-        type: (type name: (qualified_name (identifier))))))
+        type: (type
+          name: (qualified_name
+            (identifier))))))
   (enum_declaration
     name: (identifier)
     body: (enum_body
       (enum_value
-        ordinal: (ordinal)
         name: (identifier)))))
 
 ==================
-a mistyped namespace keyword stays local to its line
+a mistyped schema keyword stays local to its line
 ==================
 
-namespac shop
+schem shop
 
-record R {
-  #1 a: string
+model R {
+  a string
 }
 
 ---
 
 (source_file
-  (ERROR (identifier) (identifier))
-  (record_declaration
+  (ERROR
+    (identifier)
+    (identifier))
+  (model_declaration
     name: (identifier)
-    body: (record_body
+    body: (model_body
       (field
-        ordinal: (ordinal)
         name: (identifier)
-        type: (type name: (qualified_name (identifier)))))))
+        type: (type
+          name: (qualified_name
+            (identifier)))))))
 
 ==================
-a doc comment and annotation lead the first record when there is no namespace
+a doc comment and attribute lead the first model when there is no schema line
 ==================
 
-/// The first record.
+/// The first model.
 @deprecated
-record R {
-  #1 a: string
+model R {
+  a string
 }
 
 ---
 
 (source_file
-  (record_declaration
+  (model_declaration
     (doc_comment)
-    (annotation name: (identifier))
+    (attribute
+      name: (identifier))
     name: (identifier)
-    body: (record_body
+    body: (model_body
       (field
-        ordinal: (ordinal)
         name: (identifier)
-        type: (type name: (qualified_name (identifier)))))))
+        type: (type
+          name: (qualified_name
+            (identifier)))))))

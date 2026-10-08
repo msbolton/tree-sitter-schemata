@@ -1,0 +1,221 @@
+==================
+flags and values
+==================
+
+schema a
+
+model R {
+  id    uuid   { id }
+  key   uuid   { id unique }
+  n     int32  { min 0, max 100 } = 3
+  ratio float64 { min -1.5 max 1.5 }
+  code  string { match "^[A-Z]+$" }
+  tags  string[] { minItems 1, maxItems 10, max 20 }
+  addr  Address { embed }
+  on    bool   { index, sensitive true }
+}
+
+---
+
+(source_file
+  (schema_declaration
+    name: (qualified_name
+      (identifier)))
+  (model_declaration
+    name: (identifier)
+    body: (model_body
+      (field
+        name: (identifier)
+        type: (type
+          name: (qualified_name
+            (identifier)))
+        options: (option_block
+          (option
+            name: (identifier))))
+      (field
+        name: (identifier)
+        type: (type
+          name: (qualified_name
+            (identifier)))
+        options: (option_block
+          (option
+            name: (identifier))
+          (option
+            name: (identifier))))
+      (field
+        name: (identifier)
+        type: (type
+          name: (qualified_name
+            (identifier)))
+        options: (option_block
+          (option
+            name: (identifier)
+            value: (integer))
+          (option
+            name: (identifier)
+            value: (integer)))
+        default: (integer))
+      (field
+        name: (identifier)
+        type: (type
+          name: (qualified_name
+            (identifier)))
+        options: (option_block
+          (option
+            name: (identifier)
+            value: (float))
+          (option
+            name: (identifier)
+            value: (float))))
+      (field
+        name: (identifier)
+        type: (type
+          name: (qualified_name
+            (identifier)))
+        options: (option_block
+          (option
+            name: (identifier)
+            value: (string))))
+      (field
+        name: (identifier)
+        type: (type
+          name: (qualified_name
+            (identifier))
+          (list_suffix))
+        options: (option_block
+          (option
+            name: (identifier)
+            value: (integer))
+          (option
+            name: (identifier)
+            value: (integer))
+          (option
+            name: (identifier)
+            value: (integer))))
+      (field
+        name: (identifier)
+        type: (type
+          name: (qualified_name
+            (identifier)))
+        options: (option_block
+          (option
+            name: (identifier))))
+      (field
+        name: (identifier)
+        type: (type
+          name: (qualified_name
+            (identifier)))
+        options: (option_block
+          (option
+            name: (identifier))
+          (option
+            name: (identifier)
+            value: (boolean)))))))
+
+==================
+option names are legal field names
+==================
+
+schema a
+
+model M { index int32 { index }  min int32  id uuid { id } }
+
+---
+
+(source_file
+  (schema_declaration
+    name: (qualified_name
+      (identifier)))
+  (model_declaration
+    name: (identifier)
+    body: (model_body
+      (field
+        name: (identifier)
+        type: (type
+          name: (qualified_name
+            (identifier)))
+        options: (option_block
+          (option
+            name: (identifier))))
+      (field
+        name: (identifier)
+        type: (type
+          name: (qualified_name
+            (identifier))))
+      (field
+        name: (identifier)
+        type: (type
+          name: (qualified_name
+            (identifier)))
+        options: (option_block
+          (option
+            name: (identifier)))))))
+
+==================
+options on an alias, a union member, and a type argument
+==================
+
+schema a
+
+alias Email = string { max 254, match "^[^@]+@[^@]+$" }
+
+union Iban = Card | #2 string { max 34 }
+
+model M { tags map<string { max 10 }, int32 { min 0 }> }
+
+---
+
+(source_file
+  (schema_declaration
+    name: (qualified_name
+      (identifier)))
+  (alias_declaration
+    name: (identifier)
+    type: (type
+      name: (qualified_name
+        (identifier)))
+    options: (option_block
+      (option
+        name: (identifier)
+        value: (integer))
+      (option
+        name: (identifier)
+        value: (string))))
+  (union_declaration
+    name: (identifier)
+    (union_member
+      type: (type
+        name: (qualified_name
+          (identifier))))
+    (union_member
+      ordinal: (ordinal)
+      type: (type
+        name: (qualified_name
+          (identifier)))
+      options: (option_block
+        (option
+          name: (identifier)
+          value: (integer)))))
+  (model_declaration
+    name: (identifier)
+    body: (model_body
+      (field
+        name: (identifier)
+        type: (type
+          name: (qualified_name
+            (identifier))
+          arguments: (type_arguments
+            (type
+              name: (qualified_name
+                (identifier)))
+            options: (option_block
+              (option
+                name: (identifier)
+                value: (integer)))
+            (type
+              name: (qualified_name
+                (identifier)))
+            options: (option_block
+              (option
+                name: (identifier)
+                value: (integer)))))))))

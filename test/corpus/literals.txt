@@ -2,98 +2,159 @@
 defaults of every kind
 ==================
 
-namespace a
+schema a
 
-record R {
-  #1 a: int32 = 5
-  #2 b: int32 = -5
-  #3 c: float64 = 1.5
-  #4 d: float64 = -0.25
-  #5 e: string = "text"
-  #6 f: bool = true
-  #7 g: bool = false
-  #8 h: Status = pending
-  #9 i: Status = null
+model R {
+  #1 a int32 = 5
+  #2 b int32 = -5
+  #3 c float64 = 1.5
+  #4 d float64 = -0.25
+  #5 e string = "text"
+  #6 f bool = true
+  #7 g bool = false
+  #8 h Status = pending
+  #9 i Status? = null
 }
 
 ---
 
 (source_file
-  (namespace_declaration name: (qualified_name (identifier)))
-  (record_declaration
+  (schema_declaration
+    name: (qualified_name
+      (identifier)))
+  (model_declaration
     name: (identifier)
-    body: (record_body
-      (field ordinal: (ordinal) name: (identifier)
-        type: (type name: (qualified_name (identifier)))
+    body: (model_body
+      (field
+        ordinal: (ordinal)
+        name: (identifier)
+        type: (type
+          name: (qualified_name
+            (identifier)))
         default: (integer))
-      (field ordinal: (ordinal) name: (identifier)
-        type: (type name: (qualified_name (identifier)))
+      (field
+        ordinal: (ordinal)
+        name: (identifier)
+        type: (type
+          name: (qualified_name
+            (identifier)))
         default: (integer))
-      (field ordinal: (ordinal) name: (identifier)
-        type: (type name: (qualified_name (identifier)))
+      (field
+        ordinal: (ordinal)
+        name: (identifier)
+        type: (type
+          name: (qualified_name
+            (identifier)))
         default: (float))
-      (field ordinal: (ordinal) name: (identifier)
-        type: (type name: (qualified_name (identifier)))
+      (field
+        ordinal: (ordinal)
+        name: (identifier)
+        type: (type
+          name: (qualified_name
+            (identifier)))
         default: (float))
-      (field ordinal: (ordinal) name: (identifier)
-        type: (type name: (qualified_name (identifier)))
+      (field
+        ordinal: (ordinal)
+        name: (identifier)
+        type: (type
+          name: (qualified_name
+            (identifier)))
         default: (string))
-      (field ordinal: (ordinal) name: (identifier)
-        type: (type name: (qualified_name (identifier)))
+      (field
+        ordinal: (ordinal)
+        name: (identifier)
+        type: (type
+          name: (qualified_name
+            (identifier)))
         default: (boolean))
-      (field ordinal: (ordinal) name: (identifier)
-        type: (type name: (qualified_name (identifier)))
+      (field
+        ordinal: (ordinal)
+        name: (identifier)
+        type: (type
+          name: (qualified_name
+            (identifier)))
         default: (boolean))
-      (field ordinal: (ordinal) name: (identifier)
-        type: (type name: (qualified_name (identifier)))
+      (field
+        ordinal: (ordinal)
+        name: (identifier)
+        type: (type
+          name: (qualified_name
+            (identifier)))
         default: (identifier))
-      (field ordinal: (ordinal) name: (identifier)
-        type: (type name: (qualified_name (identifier)))
+      (field
+        ordinal: (ordinal)
+        name: (identifier)
+        type: (type
+          name: (qualified_name
+            (identifier))
+          (nullable))
         default: (identifier)))))
 
 ==================
 string escapes
 ==================
 
-namespace a
+schema a
 
-record R {
-  #1 a: string = "a\"b\\c"
+model R {
+  #1 a string = "a\"b\\c"
 }
 
 ---
 
 (source_file
-  (namespace_declaration name: (qualified_name (identifier)))
-  (record_declaration
+  (schema_declaration
+    name: (qualified_name
+      (identifier)))
+  (model_declaration
     name: (identifier)
-    body: (record_body
-      (field ordinal: (ordinal) name: (identifier)
-        type: (type name: (qualified_name (identifier)))
-        default: (string (escape_sequence) (escape_sequence))))))
+    body: (model_body
+      (field
+        ordinal: (ordinal)
+        name: (identifier)
+        type: (type
+          name: (qualified_name
+            (identifier)))
+        default: (string
+          (escape_sequence)
+          (escape_sequence))))))
 
 ==================
 ordinals
 ==================
 
-namespace a
+schema a
 
-record R {
-  #1 a: int32
-  #10 b: int32
-  #007 c: int32
+model R {
+  #1 a int32
+  #10 b int32
+  #007 c int32
 }
 
 ---
 
 (source_file
-  (namespace_declaration name: (qualified_name (identifier)))
-  (record_declaration
+  (schema_declaration
+    name: (qualified_name
+      (identifier)))
+  (model_declaration
     name: (identifier)
-    body: (record_body
-      (field ordinal: (ordinal) name: (identifier)
-        type: (type name: (qualified_name (identifier))))
-      (field ordinal: (ordinal) name: (identifier)
-        type: (type name: (qualified_name (identifier))))
-      (field ordinal: (ordinal) name: (identifier)
-        type: (type name: (qualified_name (identifier)))))))
+    body: (model_body
+      (field
+        ordinal: (ordinal)
+        name: (identifier)
+        type: (type
+          name: (qualified_name
+            (identifier))))
+      (field
+        ordinal: (ordinal)
+        name: (identifier)
+        type: (type
+          name: (qualified_name
+            (identifier))))
+      (field
+        ordinal: (ordinal)
+        name: (identifier)
+        type: (type
+          name: (qualified_name
+            (identifier)))))))

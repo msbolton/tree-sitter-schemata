@@ -4,6 +4,9 @@ A [tree-sitter](https://tree-sitter.github.io/) grammar for
 [Schemata](https://github.com/msbolton/Schemata), the schema language that compiles to Protobuf,
 Postgres, XML Schema, and JSON Schema.
 
+Version 2.0 follows the Schemata 2.0 language (`schema`, `model`, `name Type { options }`). Files
+in the 1.x syntax need `schemata upgrade` first, or a 0.1.x release of this grammar.
+
 The grammar follows the compiler's own parser rule for rule. CI parses every schema file in the
 compiler's examples and test suite, at the compiler version named in the workflow, and fails on
 any error node, so the two do not drift apart.
