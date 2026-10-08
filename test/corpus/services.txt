@@ -2,7 +2,7 @@
 service with operations and bindings
 ==================
 
-namespace shop.orders
+schema shop.orders
 
 /// Place and read orders.
 @deprecated
@@ -13,49 +13,98 @@ service Orders {
   #2 list(ListOrders): stream Order  get "/orders"
   #4 cancel(OrderId)  delete "/orders/{id}"
   #5 upload(stream Chunk): Receipt
+  #7 batch(Order[]): Receipt[]?
   reserved #6, "archive"
 }
 
 ---
 
 (source_file
-  (namespace_declaration name: (qualified_name (identifier) (identifier)))
+  (schema_declaration
+    name: (qualified_name
+      (identifier)
+      (identifier)))
   (service_declaration
     (doc_comment)
-    (annotation name: (identifier))
+    (attribute
+      name: (identifier))
     name: (identifier)
     body: (service_body
       (operation
         (doc_comment)
-        (annotation name: (identifier))
+        (attribute
+          name: (identifier))
         ordinal: (ordinal)
         name: (identifier)
-        request: (payload type: (type name: (qualified_name (identifier))))
-        response: (payload type: (type name: (qualified_name (identifier))))
-        binding: (http_binding verb: (identifier) path: (string)))
+        request: (payload
+          type: (type
+            name: (qualified_name
+              (identifier))))
+        response: (payload
+          type: (type
+            name: (qualified_name
+              (identifier))))
+        binding: (http_binding
+          verb: (identifier)
+          path: (string)))
       (operation
         ordinal: (ordinal)
         name: (identifier)
-        request: (payload type: (type name: (qualified_name (identifier))))
-        response: (payload type: (type name: (qualified_name (identifier))))
-        binding: (http_binding verb: (identifier) path: (string)))
+        request: (payload
+          type: (type
+            name: (qualified_name
+              (identifier))))
+        response: (payload
+          type: (type
+            name: (qualified_name
+              (identifier))))
+        binding: (http_binding
+          verb: (identifier)
+          path: (string)))
       (operation
         ordinal: (ordinal)
         name: (identifier)
-        request: (payload type: (type name: (qualified_name (identifier))))
-        binding: (http_binding verb: (identifier) path: (string)))
+        request: (payload
+          type: (type
+            name: (qualified_name
+              (identifier))))
+        binding: (http_binding
+          verb: (identifier)
+          path: (string)))
       (operation
         ordinal: (ordinal)
         name: (identifier)
-        request: (payload type: (type name: (qualified_name (identifier))))
-        response: (payload type: (type name: (qualified_name (identifier)))))
-      (reserved_statement (ordinal) (string)))))
+        request: (payload
+          type: (type
+            name: (qualified_name
+              (identifier))))
+        response: (payload
+          type: (type
+            name: (qualified_name
+              (identifier)))))
+      (operation
+        ordinal: (ordinal)
+        name: (identifier)
+        request: (payload
+          type: (type
+            name: (qualified_name
+              (identifier))
+            (list_suffix)))
+        response: (payload
+          type: (type
+            name: (qualified_name
+              (identifier))
+            (list_suffix
+              (nullable)))))
+      (reserved_statement
+        (ordinal)
+        (string)))))
 
 ==================
 operations without ordinals, requests, or responses
 ==================
 
-namespace a
+schema a
 
 service Health {
   ping()
@@ -66,24 +115,37 @@ service Health {
 ---
 
 (source_file
-  (namespace_declaration name: (qualified_name (identifier)))
+  (schema_declaration
+    name: (qualified_name
+      (identifier)))
   (service_declaration
     name: (identifier)
     body: (service_body
-      (operation name: (identifier))
+      (operation
+        name: (identifier))
       (operation
         name: (identifier)
-        response: (payload type: (type name: (qualified_name (identifier) (identifier)))))
+        response: (payload
+          type: (type
+            name: (qualified_name
+              (identifier)
+              (identifier))
+            (nullable))))
       (operation
         name: (identifier)
-        response: (payload type: (type name: (qualified_name (identifier))))
-        binding: (http_binding verb: (identifier) path: (string))))))
+        response: (payload
+          type: (type
+            name: (qualified_name
+              (identifier))))
+        binding: (http_binding
+          verb: (identifier)
+          path: (string))))))
 
 ==================
 a verb followed by an operation of the same name
 ==================
 
-namespace a
+schema a
 
 service S {
   a(): A get "/a"
@@ -96,66 +158,90 @@ service S {
 ---
 
 (source_file
-  (namespace_declaration name: (qualified_name (identifier)))
+  (schema_declaration
+    name: (qualified_name
+      (identifier)))
   (service_declaration
     name: (identifier)
     body: (service_body
       (operation
         name: (identifier)
-        response: (payload type: (type name: (qualified_name (identifier))))
-        binding: (http_binding verb: (identifier) path: (string)))
+        response: (payload
+          type: (type
+            name: (qualified_name
+              (identifier))))
+        binding: (http_binding
+          verb: (identifier)
+          path: (string)))
       (operation
         name: (identifier)
-        response: (payload type: (type name: (qualified_name (identifier)))))
+        response: (payload
+          type: (type
+            name: (qualified_name
+              (identifier)))))
       (operation
         name: (identifier)
-        binding: (http_binding verb: (identifier) path: (string)))
+        binding: (http_binding
+          verb: (identifier)
+          path: (string)))
       (operation
         name: (identifier)
-        request: (payload type: (type name: (qualified_name (identifier)))))
+        request: (payload
+          type: (type
+            name: (qualified_name
+              (identifier)))))
       (operation
         name: (identifier)
-        request: (payload type: (type name: (qualified_name (identifier))))))))
+        request: (payload
+          type: (type
+            name: (qualified_name
+              (identifier))))))))
 
 ==================
 empty service and a trailing doc comment
 ==================
 
-namespace a
+schema a
 
 service Empty {
   /// Nothing follows.
 }
-record After { #1 x: int32 }
+model After { #1 x int32 }
 
 ---
 
 (source_file
-  (namespace_declaration name: (qualified_name (identifier)))
+  (schema_declaration
+    name: (qualified_name
+      (identifier)))
   (service_declaration
     name: (identifier)
-    body: (service_body (comment)))
-  (record_declaration
+    body: (service_body
+      (comment)))
+  (model_declaration
     name: (identifier)
-    body: (record_body
+    body: (model_body
       (field
         ordinal: (ordinal)
         name: (identifier)
-        type: (type name: (qualified_name (identifier)))))))
+        type: (type
+          name: (qualified_name
+            (identifier)))))))
 
 ==================
 verbs and keyword-adjacent words stay legal names
 ==================
 
-namespace a
+schema a
 
-record Verbs {
-  #1 get: string
-  #2 post: int32
-  #3 delete: get
-  #4 services: string
-  #5 streaming: bool
-  #6 operations: list<string>
+model Verbs {
+  #1 get string
+  #2 post int32
+  #3 delete get
+  #4 services string
+  #5 streaming bool
+  #6 operations string[]
+  #7 models int32
 }
 
 enum Method { get, put, service_level }
@@ -163,40 +249,61 @@ enum Method { get, put, service_level }
 ---
 
 (source_file
-  (namespace_declaration name: (qualified_name (identifier)))
-  (record_declaration
+  (schema_declaration
+    name: (qualified_name
+      (identifier)))
+  (model_declaration
     name: (identifier)
-    body: (record_body
-      (field
-        ordinal: (ordinal)
-        name: (identifier)
-        type: (type name: (qualified_name (identifier))))
-      (field
-        ordinal: (ordinal)
-        name: (identifier)
-        type: (type name: (qualified_name (identifier))))
-      (field
-        ordinal: (ordinal)
-        name: (identifier)
-        type: (type name: (qualified_name (identifier))))
-      (field
-        ordinal: (ordinal)
-        name: (identifier)
-        type: (type name: (qualified_name (identifier))))
-      (field
-        ordinal: (ordinal)
-        name: (identifier)
-        type: (type name: (qualified_name (identifier))))
+    body: (model_body
       (field
         ordinal: (ordinal)
         name: (identifier)
         type: (type
-          name: (qualified_name (identifier))
-          arguments: (type_arguments
-            (type name: (qualified_name (identifier))))))))
+          name: (qualified_name
+            (identifier))))
+      (field
+        ordinal: (ordinal)
+        name: (identifier)
+        type: (type
+          name: (qualified_name
+            (identifier))))
+      (field
+        ordinal: (ordinal)
+        name: (identifier)
+        type: (type
+          name: (qualified_name
+            (identifier))))
+      (field
+        ordinal: (ordinal)
+        name: (identifier)
+        type: (type
+          name: (qualified_name
+            (identifier))))
+      (field
+        ordinal: (ordinal)
+        name: (identifier)
+        type: (type
+          name: (qualified_name
+            (identifier))))
+      (field
+        ordinal: (ordinal)
+        name: (identifier)
+        type: (type
+          name: (qualified_name
+            (identifier))
+          (list_suffix)))
+      (field
+        ordinal: (ordinal)
+        name: (identifier)
+        type: (type
+          name: (qualified_name
+            (identifier))))))
   (enum_declaration
     name: (identifier)
     body: (enum_body
-      (enum_value name: (identifier))
-      (enum_value name: (identifier))
-      (enum_value name: (identifier)))))
+      (enum_value
+        name: (identifier))
+      (enum_value
+        name: (identifier))
+      (enum_value
+        name: (identifier)))))

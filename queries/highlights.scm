@@ -5,10 +5,10 @@
 
 ; Keywords
 [
-  "namespace"
+  "schema"
   "import"
   "as"
-  "record"
+  "model"
   "enum"
   "union"
   "alias"
@@ -26,13 +26,13 @@
 (escape_sequence) @string.escape
 (ordinal) @constant
 
-; Namespaces
-(namespace_declaration name: (qualified_name (identifier) @module))
-(import_declaration namespace: (qualified_name (identifier) @module))
+; Schema names
+(schema_declaration name: (qualified_name (identifier) @module))
+(import_declaration schema: (qualified_name (identifier) @module))
 (import_declaration alias: (identifier) @module)
 
 ; Declared names
-(record_declaration name: (identifier) @type)
+(model_declaration name: (identifier) @type)
 (enum_declaration name: (identifier) @type)
 (union_declaration name: (identifier) @type)
 (alias_declaration name: (identifier) @type)
@@ -47,19 +47,26 @@
 ; Type references
 (type name: (qualified_name (identifier) @type))
 ((type name: (qualified_name . (identifier) @type.builtin .))
-  (#match? @type.builtin "^(bool|int32|int64|float32|float64|decimal|string|bytes|uuid|date|time|instant|duration|list|map)$"))
+  (#match? @type.builtin "^(bool|int32|int64|float32|float64|decimal|string|bytes|uuid|date|time|instant|duration|map)$"))
 
-; Defaults and refinements
+; Defaults
 (field default: (identifier) @constant)
-(refinement key: (identifier) @property)
 
-; Annotations
-(annotation "@" @attribute)
-(annotation name: (identifier) @attribute)
-(annotation_argument key: (identifier) @property)
+; Options
+(option name: (identifier) @property)
+
+; Attributes
+(attribute "@" @attribute)
+(attribute name: (identifier) @attribute)
+(block_attribute "@@" @attribute)
+(block_attribute name: (identifier) @attribute)
+(attribute_argument key: (identifier) @property)
+(attribute_argument !key value: (identifier) @property)
+(attribute_argument key: (identifier) value: (identifier) @constant)
 (name_tuple (identifier) @property)
 
 ; Punctuation
-["{" "}" "(" ")" "<" ">"] @punctuation.bracket
+["{" "}" "(" ")" "<" ">" "[" "]"] @punctuation.bracket
 ["," "." ":"] @punctuation.delimiter
-["=" "|" "?" ".."] @operator
+["=" "|" ".."] @operator
+(nullable) @operator

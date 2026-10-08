@@ -2,119 +2,188 @@
 generic types
 ==================
 
-namespace a
+schema a
 
-record R {
-  #1 a: list<string>
-  #2 b: map<string, list<Line>>
-  #3 c: list<Line>(min = 1)
+model R {
+  #1 a map<string, int32>
+  #2 b map<string, Line[]>
+  #3 c map<int64, Item?>
 }
 
 ---
 
 (source_file
-  (namespace_declaration name: (qualified_name (identifier)))
-  (record_declaration
+  (schema_declaration
+    name: (qualified_name
+      (identifier)))
+  (model_declaration
     name: (identifier)
-    body: (record_body
+    body: (model_body
       (field
         ordinal: (ordinal)
         name: (identifier)
         type: (type
-          name: (qualified_name (identifier))
+          name: (qualified_name
+            (identifier))
           arguments: (type_arguments
-            (type name: (qualified_name (identifier))))))
-      (field
-        ordinal: (ordinal)
-        name: (identifier)
-        type: (type
-          name: (qualified_name (identifier))
-          arguments: (type_arguments
-            (type name: (qualified_name (identifier)))
             (type
-              name: (qualified_name (identifier))
-              arguments: (type_arguments
-                (type name: (qualified_name (identifier))))))))
+              name: (qualified_name
+                (identifier)))
+            (type
+              name: (qualified_name
+                (identifier))))))
       (field
         ordinal: (ordinal)
         name: (identifier)
         type: (type
-          name: (qualified_name (identifier))
+          name: (qualified_name
+            (identifier))
           arguments: (type_arguments
-            (type name: (qualified_name (identifier))))
-          refinements: (refinements
-            (refinement key: (identifier) value: (integer))))))))
+            (type
+              name: (qualified_name
+                (identifier)))
+            (type
+              name: (qualified_name
+                (identifier))
+              (list_suffix)))))
+      (field
+        ordinal: (ordinal)
+        name: (identifier)
+        type: (type
+          name: (qualified_name
+            (identifier))
+          arguments: (type_arguments
+            (type
+              name: (qualified_name
+                (identifier)))
+            (type
+              name: (qualified_name
+                (identifier))
+              (nullable))))))))
 
 ==================
-nullable and refined
+nullable, lists, and decimal
 ==================
 
-namespace a
+schema a
 
-record R {
-  #1 a: string(max = 4)?
-  #2 b: decimal(19, 4)
-  #3 c: string(pattern = "^[a-z]+$")
+model R {
+  #1 a string?
+  #2 b decimal(19, 4)
+  #3 c string[]
+  #4 d string?[]
+  #5 e string[]?
+  #6 f string?[]?
+  #7 g string [ ] ?
 }
 
 ---
 
 (source_file
-  (namespace_declaration name: (qualified_name (identifier)))
-  (record_declaration
+  (schema_declaration
+    name: (qualified_name
+      (identifier)))
+  (model_declaration
     name: (identifier)
-    body: (record_body
+    body: (model_body
       (field
         ordinal: (ordinal)
         name: (identifier)
         type: (type
-          name: (qualified_name (identifier))
-          refinements: (refinements
-            (refinement key: (identifier) value: (integer)))))
+          name: (qualified_name
+            (identifier))
+          (nullable)))
       (field
         ordinal: (ordinal)
         name: (identifier)
         type: (type
-          name: (qualified_name (identifier))
-          refinements: (refinements
-            (refinement value: (integer))
-            (refinement value: (integer)))))
+          name: (qualified_name
+            (identifier))
+          precision: (decimal_arguments
+            (integer)
+            (integer))))
       (field
         ordinal: (ordinal)
         name: (identifier)
         type: (type
-          name: (qualified_name (identifier))
-          refinements: (refinements
-            (refinement key: (identifier) value: (string))))))))
+          name: (qualified_name
+            (identifier))
+          (list_suffix)))
+      (field
+        ordinal: (ordinal)
+        name: (identifier)
+        type: (type
+          name: (qualified_name
+            (identifier))
+          (nullable)
+          (list_suffix)))
+      (field
+        ordinal: (ordinal)
+        name: (identifier)
+        type: (type
+          name: (qualified_name
+            (identifier))
+          (list_suffix
+            (nullable))))
+      (field
+        ordinal: (ordinal)
+        name: (identifier)
+        type: (type
+          name: (qualified_name
+            (identifier))
+          (nullable)
+          (list_suffix
+            (nullable))))
+      (field
+        ordinal: (ordinal)
+        name: (identifier)
+        type: (type
+          name: (qualified_name
+            (identifier))
+          (list_suffix
+            (nullable)))))))
 
 ==================
 qualified type names
 ==================
 
-namespace a
+schema a
 
-record R {
-  #1 a: cust.Customer
-  #2 b: shop.customers.Customer
-  #3 c: Outer.Inner
+model R {
+  #1 a cust.Customer
+  #2 b shop.customers.Customer
+  #3 c Outer.Inner[]
 }
 
 ---
 
 (source_file
-  (namespace_declaration name: (qualified_name (identifier)))
-  (record_declaration
+  (schema_declaration
+    name: (qualified_name
+      (identifier)))
+  (model_declaration
     name: (identifier)
-    body: (record_body
+    body: (model_body
       (field
         ordinal: (ordinal)
         name: (identifier)
-        type: (type name: (qualified_name (identifier) (identifier))))
+        type: (type
+          name: (qualified_name
+            (identifier)
+            (identifier))))
       (field
         ordinal: (ordinal)
         name: (identifier)
-        type: (type name: (qualified_name (identifier) (identifier) (identifier))))
+        type: (type
+          name: (qualified_name
+            (identifier)
+            (identifier)
+            (identifier))))
       (field
         ordinal: (ordinal)
         name: (identifier)
-        type: (type name: (qualified_name (identifier) (identifier)))))))
+        type: (type
+          name: (qualified_name
+            (identifier)
+            (identifier))
+          (list_suffix))))))

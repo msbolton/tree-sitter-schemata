@@ -1,0 +1,376 @@
+==================
+attribute forms
+==================
+
+schema a
+
+/// Orders.
+@deprecated
+@sql(table: "orders")
+model R {
+  @deprecated("use placed_at")
+  #1 a int32
+  #2 b int32 @sql(strategy: table)
+  #3 c int32 @sql(type: "varchar(36)") @name("C")
+  @@unique(a, b)
+  @@sql(unique: (a, b))
+}
+
+---
+
+(source_file
+  (schema_declaration
+    name: (qualified_name
+      (identifier)))
+  (model_declaration
+    (doc_comment)
+    (attribute
+      name: (identifier))
+    (attribute
+      name: (identifier)
+      (attribute_argument
+        key: (identifier)
+        value: (string)))
+    name: (identifier)
+    body: (model_body
+      (field
+        (attribute
+          name: (identifier)
+          (attribute_argument
+            value: (string)))
+        ordinal: (ordinal)
+        name: (identifier)
+        type: (type
+          name: (qualified_name
+            (identifier))))
+      (field
+        ordinal: (ordinal)
+        name: (identifier)
+        type: (type
+          name: (qualified_name
+            (identifier)))
+        (attribute
+          name: (identifier)
+          (attribute_argument
+            key: (identifier)
+            value: (identifier))))
+      (field
+        ordinal: (ordinal)
+        name: (identifier)
+        type: (type
+          name: (qualified_name
+            (identifier)))
+        (attribute
+          name: (identifier)
+          (attribute_argument
+            key: (identifier)
+            value: (string)))
+        (attribute
+          name: (identifier)
+          (attribute_argument
+            value: (string))))
+      (block_attribute
+        name: (identifier)
+        (attribute_argument
+          value: (identifier))
+        (attribute_argument
+          value: (identifier)))
+      (block_attribute
+        name: (identifier)
+        (attribute_argument
+          key: (identifier)
+          value: (name_tuple
+            (identifier)
+            (identifier)))))))
+
+==================
+header attributes
+==================
+
+schema shop.orders @sql(schema: "shop") @proto(package: "shop.v1")
+
+---
+
+(source_file
+  (schema_declaration
+    name: (qualified_name
+      (identifier)
+      (identifier))
+    (attribute
+      name: (identifier)
+      (attribute_argument
+        key: (identifier)
+        value: (string)))
+    (attribute
+      name: (identifier)
+      (attribute_argument
+        key: (identifier)
+        value: (string)))))
+
+==================
+a doc comment ends the header attributes
+==================
+
+schema s @a
+/// Doc.
+@b model M {}
+
+---
+
+(source_file
+  (schema_declaration
+    name: (qualified_name
+      (identifier))
+    (attribute
+      name: (identifier)))
+  (model_declaration
+    (doc_comment)
+    (attribute
+      name: (identifier))
+    name: (identifier)
+    body: (model_body)))
+
+==================
+keyword as an attribute name or key
+==================
+
+schema a
+
+/// R.
+@x(model: 1, as: "y", true: false, schema: s)
+@stream
+model R {}
+
+---
+
+(source_file
+  (schema_declaration
+    name: (qualified_name
+      (identifier)))
+  (model_declaration
+    (doc_comment)
+    (attribute
+      name: (identifier)
+      (attribute_argument
+        key: (identifier)
+        value: (integer))
+      (attribute_argument
+        key: (identifier)
+        value: (string))
+      (attribute_argument
+        key: (identifier)
+        value: (boolean))
+      (attribute_argument
+        key: (identifier)
+        value: (identifier)))
+    (attribute
+      name: (identifier))
+    name: (identifier)
+    body: (model_body)))
+
+==================
+several attributes and docs on one field
+==================
+
+schema a
+
+model R {
+  /// Doc.
+  @sql(type: "text") @deprecated #1 id uuid
+}
+
+---
+
+(source_file
+  (schema_declaration
+    name: (qualified_name
+      (identifier)))
+  (model_declaration
+    name: (identifier)
+    body: (model_body
+      (field
+        (doc_comment)
+        (attribute
+          name: (identifier)
+          (attribute_argument
+            key: (identifier)
+            value: (string)))
+        (attribute
+          name: (identifier))
+        ordinal: (ordinal)
+        name: (identifier)
+        type: (type
+          name: (qualified_name
+            (identifier)))))))
+
+==================
+relations
+==================
+
+schema a
+
+model Order {
+  id       uuid     { id }
+  customer Customer @relation(onDelete: cascade)
+  parent   Order?   @relation(onDelete: set_null)
+  buyer    Customer @relation(customer)
+}
+
+model Customer {
+  id     uuid    { id }
+  orders Order[] @relation(buyer)
+  bought Order[] @relation
+}
+
+---
+
+(source_file
+  (schema_declaration
+    name: (qualified_name
+      (identifier)))
+  (model_declaration
+    name: (identifier)
+    body: (model_body
+      (field
+        name: (identifier)
+        type: (type
+          name: (qualified_name
+            (identifier)))
+        options: (option_block
+          (option
+            name: (identifier))))
+      (field
+        name: (identifier)
+        type: (type
+          name: (qualified_name
+            (identifier)))
+        (attribute
+          name: (identifier)
+          (attribute_argument
+            key: (identifier)
+            value: (identifier))))
+      (field
+        name: (identifier)
+        type: (type
+          name: (qualified_name
+            (identifier))
+          (nullable))
+        (attribute
+          name: (identifier)
+          (attribute_argument
+            key: (identifier)
+            value: (identifier))))
+      (field
+        name: (identifier)
+        type: (type
+          name: (qualified_name
+            (identifier)))
+        (attribute
+          name: (identifier)
+          (attribute_argument
+            value: (identifier))))))
+  (model_declaration
+    name: (identifier)
+    body: (model_body
+      (field
+        name: (identifier)
+        type: (type
+          name: (qualified_name
+            (identifier)))
+        options: (option_block
+          (option
+            name: (identifier))))
+      (field
+        name: (identifier)
+        type: (type
+          name: (qualified_name
+            (identifier))
+          (list_suffix))
+        (attribute
+          name: (identifier)
+          (attribute_argument
+            value: (identifier))))
+      (field
+        name: (identifier)
+        type: (type
+          name: (qualified_name
+            (identifier))
+          (list_suffix))
+        (attribute
+          name: (identifier))))))
+
+==================
+attributes before a default stay on the field
+==================
+
+schema a
+
+model R {
+  a int32
+    @deprecated("x") = 1
+}
+
+---
+
+(source_file
+  (schema_declaration
+    name: (qualified_name
+      (identifier)))
+  (model_declaration
+    name: (identifier)
+    body: (model_body
+      (field
+        name: (identifier)
+        type: (type
+          name: (qualified_name
+            (identifier)))
+        (attribute
+          name: (identifier)
+          (attribute_argument
+            value: (string)))
+        default: (integer)))))
+
+==================
+attributes below the header line are read into the header
+==================
+
+schema a
+@deprecated
+model M {}
+
+---
+
+(source_file
+  (schema_declaration
+    name: (qualified_name
+      (identifier))
+    (attribute
+      name: (identifier)))
+  (model_declaration
+    name: (identifier)
+    body: (model_body)))
+
+==================
+block attributes close an empty body
+==================
+
+schema a
+
+model R {
+  @@sql(table: "r")
+}
+
+---
+
+(source_file
+  (schema_declaration
+    name: (qualified_name
+      (identifier)))
+  (model_declaration
+    name: (identifier)
+    body: (model_body
+      (block_attribute
+        name: (identifier)
+        (attribute_argument
+          key: (identifier)
+          value: (string))))))

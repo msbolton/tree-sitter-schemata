@@ -2,49 +2,73 @@
 names that look like builtin types
 ==================
 
-namespace a
+schema a
 
-record R { #1 date: date #2 string: string #3 list: list<map> }
-enum E { #1 list, #2 map }
+model R { #1 date date #2 string string #3 map map<string, int32> }
+enum E { list, map }
 
 ---
 
 (source_file
-  (namespace_declaration name: (qualified_name (identifier)))
-  (record_declaration
+  (schema_declaration
+    name: (qualified_name
+      (identifier)))
+  (model_declaration
     name: (identifier)
-    body: (record_body
-      (field ordinal: (ordinal) name: (identifier)
-        type: (type name: (qualified_name (identifier))))
-      (field ordinal: (ordinal) name: (identifier)
-        type: (type name: (qualified_name (identifier))))
-      (field ordinal: (ordinal) name: (identifier)
+    body: (model_body
+      (field
+        ordinal: (ordinal)
+        name: (identifier)
         type: (type
-          name: (qualified_name (identifier))
+          name: (qualified_name
+            (identifier))))
+      (field
+        ordinal: (ordinal)
+        name: (identifier)
+        type: (type
+          name: (qualified_name
+            (identifier))))
+      (field
+        ordinal: (ordinal)
+        name: (identifier)
+        type: (type
+          name: (qualified_name
+            (identifier))
           arguments: (type_arguments
-            (type name: (qualified_name (identifier))))))))
+            (type
+              name: (qualified_name
+                (identifier)))
+            (type
+              name: (qualified_name
+                (identifier))))))))
   (enum_declaration
     name: (identifier)
     body: (enum_body
-      (enum_value ordinal: (ordinal) name: (identifier))
-      (enum_value ordinal: (ordinal) name: (identifier)))))
+      (enum_value
+        name: (identifier))
+      (enum_value
+        name: (identifier)))))
 
 ==================
 whitespace and a comment inside a qualified name
 ==================
 
-namespace a
+schema a
 
-record R { #1 a: shop . /* c */ customers.Customer }
+model R { #1 a shop . /* c */ customers.Customer }
 
 ---
 
 (source_file
-  (namespace_declaration name: (qualified_name (identifier)))
-  (record_declaration
+  (schema_declaration
+    name: (qualified_name
+      (identifier)))
+  (model_declaration
     name: (identifier)
-    body: (record_body
-      (field ordinal: (ordinal) name: (identifier)
+    body: (model_body
+      (field
+        ordinal: (ordinal)
+        name: (identifier)
         type: (type
           name: (qualified_name
             (identifier)
@@ -53,84 +77,161 @@ record R { #1 a: shop . /* c */ customers.Customer }
             (identifier)))))))
 
 ==================
-empty record and empty enum
+empty model and empty enum
 ==================
 
-namespace a
+schema a
 
-record Cash {}
+model Cash {}
 enum E {}
 
 ---
 
 (source_file
-  (namespace_declaration name: (qualified_name (identifier)))
-  (record_declaration name: (identifier) body: (record_body))
-  (enum_declaration name: (identifier) body: (enum_body)))
-
-==================
-a file with only a namespace
-==================
-
-namespace a
-
----
-
-(source_file
-  (namespace_declaration name: (qualified_name (identifier))))
-
-==================
-fields without ordinals
-==================
-
-namespace a
-
-record R { a: int32 b: int32 }
-
----
-
-(source_file
-  (namespace_declaration name: (qualified_name (identifier)))
-  (record_declaration
+  (schema_declaration
+    name: (qualified_name
+      (identifier)))
+  (model_declaration
     name: (identifier)
-    body: (record_body
-      (field name: (identifier)
-        type: (type name: (qualified_name (identifier))))
-      (field name: (identifier)
-        type: (type name: (qualified_name (identifier)))))))
+    body: (model_body))
+  (enum_declaration
+    name: (identifier)
+    body: (enum_body)))
+
+==================
+a file with only a schema line
+==================
+
+schema a
+
+---
+
+(source_file
+  (schema_declaration
+    name: (qualified_name
+      (identifier))))
+
+==================
+fields side by side on one line
+==================
+
+schema a
+
+model R { a int32  b string { max 3 }  c bool = true  d Item[] }
+
+---
+
+(source_file
+  (schema_declaration
+    name: (qualified_name
+      (identifier)))
+  (model_declaration
+    name: (identifier)
+    body: (model_body
+      (field
+        name: (identifier)
+        type: (type
+          name: (qualified_name
+            (identifier))))
+      (field
+        name: (identifier)
+        type: (type
+          name: (qualified_name
+            (identifier)))
+        options: (option_block
+          (option
+            name: (identifier)
+            value: (integer))))
+      (field
+        name: (identifier)
+        type: (type
+          name: (qualified_name
+            (identifier)))
+        default: (boolean))
+      (field
+        name: (identifier)
+        type: (type
+          name: (qualified_name
+            (identifier))
+          (list_suffix))))))
 
 ==================
 everything on one line
 ==================
 
-namespace a record R { #1 x: int32 } enum E { #1 a }
+schema a model R { #1 x int32 } enum E { a }
 
 ---
 
 (source_file
-  (namespace_declaration name: (qualified_name (identifier)))
-  (record_declaration
+  (schema_declaration
+    name: (qualified_name
+      (identifier)))
+  (model_declaration
     name: (identifier)
-    body: (record_body
-      (field ordinal: (ordinal) name: (identifier)
-        type: (type name: (qualified_name (identifier))))))
+    body: (model_body
+      (field
+        ordinal: (ordinal)
+        name: (identifier)
+        type: (type
+          name: (qualified_name
+            (identifier))))))
   (enum_declaration
     name: (identifier)
     body: (enum_body
-      (enum_value ordinal: (ordinal) name: (identifier)))))
+      (enum_value
+        name: (identifier)))))
 
 ==================
 a string with a brace inside a future block
 ==================
 
-namespace a
+schema a
 
 operation S { "}" { "{" } }
 
 ---
 
 (source_file
-  (namespace_declaration name: (qualified_name (identifier)))
+  (schema_declaration
+    name: (qualified_name
+      (identifier)))
   (future_declaration
     (identifier)
-    (block (string) (block (string)))))
+    (block
+      (string)
+      (block
+        (string)))))
+
+==================
+a default that names a value before the next field
+==================
+
+schema a
+
+model R {
+  kind Kind = personal
+  born date?
+}
+
+---
+
+(source_file
+  (schema_declaration
+    name: (qualified_name
+      (identifier)))
+  (model_declaration
+    name: (identifier)
+    body: (model_body
+      (field
+        name: (identifier)
+        type: (type
+          name: (qualified_name
+            (identifier)))
+        default: (identifier))
+      (field
+        name: (identifier)
+        type: (type
+          name: (qualified_name
+            (identifier))
+          (nullable))))))
