@@ -235,3 +235,39 @@ model R {
           name: (qualified_name
             (identifier))
           (nullable))))))
+
+==================
+former keywords are identifiers
+==================
+
+schema a
+
+model namespace_log { record int32  namespace string }
+enum Former { namespace record }
+
+---
+
+(source_file
+  (schema_declaration
+    name: (qualified_name
+      (identifier)))
+  (model_declaration
+    name: (identifier)
+    body: (model_body
+      (field
+        name: (identifier)
+        type: (type
+          name: (qualified_name
+            (identifier))))
+      (field
+        name: (identifier)
+        type: (type
+          name: (qualified_name
+            (identifier))))))
+  (enum_declaration
+    name: (identifier)
+    body: (enum_body
+      (enum_value
+        name: (identifier))
+      (enum_value
+        name: (identifier)))))
