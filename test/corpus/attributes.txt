@@ -374,3 +374,57 @@ model R {
         (attribute_argument
           key: (identifier)
           value: (string))))))
+
+==================
+pinned timestamps
+==================
+
+schema a
+
+model M {
+  #1 id uuid { id }
+  @@timestamps(#11, #12)
+}
+
+model N {
+  id uuid { id }
+  @@timestamps
+}
+
+---
+
+(source_file
+  (schema_declaration
+    name: (qualified_name
+      (identifier)))
+  (model_declaration
+    name: (identifier)
+    body: (model_body
+      (field
+        ordinal: (ordinal)
+        name: (identifier)
+        type: (type
+          name: (qualified_name
+            (identifier)))
+        options: (option_block
+          (option
+            name: (identifier))))
+      (block_attribute
+        name: (identifier)
+        (attribute_argument
+          value: (ordinal))
+        (attribute_argument
+          value: (ordinal)))))
+  (model_declaration
+    name: (identifier)
+    body: (model_body
+      (field
+        name: (identifier)
+        type: (type
+          name: (qualified_name
+            (identifier)))
+        options: (option_block
+          (option
+            name: (identifier))))
+      (block_attribute
+        name: (identifier)))))

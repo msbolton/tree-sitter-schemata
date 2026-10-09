@@ -265,9 +265,9 @@ module.exports = grammar({
       seq(
         field('key', $._attribute_name),
         ':',
-        field('value', choice($._literal, $.name_tuple)),
+        field('value', choice($._literal, $.ordinal, $.name_tuple)),
       ),
-      field('value', $._literal),
+      field('value', choice($._literal, $.ordinal)),
     ),
 
     name_tuple: $ => seq('(', commaSep1($.identifier), ')'),

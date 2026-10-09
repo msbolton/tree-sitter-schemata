@@ -1800,6 +1800,10 @@
                   },
                   {
                     "type": "SYMBOL",
+                    "name": "ordinal"
+                  },
+                  {
+                    "type": "SYMBOL",
                     "name": "name_tuple"
                   }
                 ]
@@ -1811,8 +1815,17 @@
           "type": "FIELD",
           "name": "value",
           "content": {
-            "type": "SYMBOL",
-            "name": "_literal"
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_literal"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "ordinal"
+              }
+            ]
           }
         }
       ]
