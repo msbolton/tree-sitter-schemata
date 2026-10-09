@@ -114,6 +114,10 @@
             "named": true
           },
           {
+            "type": "ordinal",
+            "named": true
+          },
+          {
             "type": "string",
             "named": true
           }
