@@ -179,7 +179,7 @@ module.exports = grammar({
 
     service_body: $ => seq(
       '{',
-      repeat(choice($.operation, $.reserved_statement)),
+      repeat(choice($.operation, $.reserved_statement, $.errors_clause)),
       optional($._stray_docs),
       '}',
     ),
@@ -194,13 +194,35 @@ module.exports = grammar({
       ')',
       optional(seq(':', field('response', $.payload))),
       optional(field('binding', $.http_binding)),
+      optional(field('errors', $.errors_clause)),
     ),
 
     payload: $ => seq(optional('stream'), field('type', $.type)),
 
     // The verb is an identifier rather than a keyword, so `get` and `post` stay legal names
-    // elsewhere; the compiler checks it against the HTTP methods.
-    http_binding: $ => seq(field('verb', $.identifier), field('path', $.string)),
+    // elsewhere; the compiler checks it against the HTTP methods. A success code may follow the
+    // path: `post "/orders" 201`.
+    http_binding: $ => seq(
+      field('verb', $.identifier),
+      field('path', $.string),
+      optional(field('status', $.integer)),
+    ),
+
+    // `errors { 404 Problem  503 }` on a service or after an operation. The word is an identifier,
+    // as the verb is, so `errors` stays a legal name elsewhere; the compiler checks it.
+    errors_clause: $ => seq(
+      field('keyword', $.identifier),
+      '{',
+      repeat($.error_response),
+      '}',
+    ),
+
+    // A code is an integer or `default`; a body, when present, is a type. The body is read
+    // greedily, as the compiler reads it.
+    error_response: $ => prec.right(seq(
+      field('code', choice($.integer, $.identifier)),
+      optional(field('body', $.type)),
+    )),
 
     // `operation` is reserved for a later version of the language at the top level; the body is
     // skipped as balanced braces.
