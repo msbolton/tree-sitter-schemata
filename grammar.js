@@ -218,9 +218,12 @@ module.exports = grammar({
     ),
 
     // A code is an integer or `default`; a body, when present, is a type. The body is read
-    // greedily, as the compiler reads it.
+    // greedily, as the compiler reads it. `default` is a keyword token here, so where a new entry
+    // may start (after a bodiless code) it is read as the next code rather than as that code's
+    // body type, again as the compiler reads it; keyword extraction keeps it an identifier
+    // everywhere else, so it stays a legal field, operation and type name.
     error_response: $ => prec.right(seq(
-      field('code', choice($.integer, $.identifier)),
+      field('code', choice($.integer, 'default')),
       optional(field('body', $.type)),
     )),
 

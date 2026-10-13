@@ -1216,8 +1216,8 @@
                   "name": "integer"
                 },
                 {
-                  "type": "SYMBOL",
-                  "name": "identifier"
+                  "type": "STRING",
+                  "value": "default"
                 }
               ]
             }

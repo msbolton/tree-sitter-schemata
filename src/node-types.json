@@ -312,8 +312,8 @@
         "required": true,
         "types": [
           {
-            "type": "identifier",
-            "named": true
+            "type": "default",
+            "named": false
           },
           {
             "type": "integer",
@@ -1283,6 +1283,10 @@
     "type": "comment",
     "named": true,
     "extra": true
+  },
+  {
+    "type": "default",
+    "named": false
   },
   {
     "type": "doc_comment",

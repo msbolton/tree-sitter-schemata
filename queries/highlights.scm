@@ -46,7 +46,7 @@
 
 ; Errors clauses: the word is a keyword only here, and `default` is a code
 (errors_clause keyword: (identifier) @keyword)
-(error_response code: (identifier) @constant.builtin)
+(error_response "default" @constant.builtin)
 
 ; Type references
 (type name: (qualified_name (identifier) @type))

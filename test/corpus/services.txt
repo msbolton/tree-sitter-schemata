@@ -350,7 +350,6 @@ service Orders {
             name: (qualified_name
               (identifier))))
         (error_response
-          code: (identifier)
           body: (type
             name: (qualified_name
               (identifier)))))
@@ -421,8 +420,45 @@ service Orders {
             body: (type
               name: (qualified_name
                 (identifier))))
-          (error_response
-            code: (identifier)))))))
+          (error_response))))))
+
+==================
+a bodiless code before default
+==================
+
+schema a
+
+service S {
+  errors { 404 Problem  409 Conflict  503  default Problem }
+}
+
+---
+
+(source_file
+  (schema_declaration
+    name: (qualified_name
+      (identifier)))
+  (service_declaration
+    name: (identifier)
+    body: (service_body
+      (errors_clause
+        keyword: (identifier)
+        (error_response
+          code: (integer)
+          body: (type
+            name: (qualified_name
+              (identifier))))
+        (error_response
+          code: (integer)
+          body: (type
+            name: (qualified_name
+              (identifier))))
+        (error_response
+          code: (integer))
+        (error_response
+          body: (type
+            name: (qualified_name
+              (identifier))))))))
 
 ==================
 errors and default stay legal names
