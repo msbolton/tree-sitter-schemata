@@ -307,3 +307,219 @@ enum Method { get, put, service_level }
         name: (identifier))
       (enum_value
         name: (identifier)))))
+
+==================
+success codes and errors clauses
+==================
+
+schema shop.orders
+
+service Orders {
+  errors { 400 common.Problem  401 Problem  default Problem }
+  #1 get(OrderId): Order  get "/orders/{id}"  errors { 404 Problem }
+  #2 place(PlaceOrder): Order  post "/orders" 201
+  #3 cancel(OrderId)  delete "/orders/{id}" 204  errors { 409  503 }
+  #4 ping(): Pong
+    errors {
+      429 Problem
+      default
+    }
+}
+
+---
+
+(source_file
+  (schema_declaration
+    name: (qualified_name
+      (identifier)
+      (identifier)))
+  (service_declaration
+    name: (identifier)
+    body: (service_body
+      (errors_clause
+        keyword: (identifier)
+        (error_response
+          code: (integer)
+          body: (type
+            name: (qualified_name
+              (identifier)
+              (identifier))))
+        (error_response
+          code: (integer)
+          body: (type
+            name: (qualified_name
+              (identifier))))
+        (error_response
+          body: (type
+            name: (qualified_name
+              (identifier)))))
+      (operation
+        ordinal: (ordinal)
+        name: (identifier)
+        request: (payload
+          type: (type
+            name: (qualified_name
+              (identifier))))
+        response: (payload
+          type: (type
+            name: (qualified_name
+              (identifier))))
+        binding: (http_binding
+          verb: (identifier)
+          path: (string))
+        errors: (errors_clause
+          keyword: (identifier)
+          (error_response
+            code: (integer)
+            body: (type
+              name: (qualified_name
+                (identifier))))))
+      (operation
+        ordinal: (ordinal)
+        name: (identifier)
+        request: (payload
+          type: (type
+            name: (qualified_name
+              (identifier))))
+        response: (payload
+          type: (type
+            name: (qualified_name
+              (identifier))))
+        binding: (http_binding
+          verb: (identifier)
+          path: (string)
+          status: (integer)))
+      (operation
+        ordinal: (ordinal)
+        name: (identifier)
+        request: (payload
+          type: (type
+            name: (qualified_name
+              (identifier))))
+        binding: (http_binding
+          verb: (identifier)
+          path: (string)
+          status: (integer))
+        errors: (errors_clause
+          keyword: (identifier)
+          (error_response
+            code: (integer))
+          (error_response
+            code: (integer))))
+      (operation
+        ordinal: (ordinal)
+        name: (identifier)
+        response: (payload
+          type: (type
+            name: (qualified_name
+              (identifier))))
+        errors: (errors_clause
+          keyword: (identifier)
+          (error_response
+            code: (integer)
+            body: (type
+              name: (qualified_name
+                (identifier))))
+          (error_response))))))
+
+==================
+a bodiless code before default
+==================
+
+schema a
+
+service S {
+  errors { 404 Problem  409 Conflict  503  default Problem }
+}
+
+---
+
+(source_file
+  (schema_declaration
+    name: (qualified_name
+      (identifier)))
+  (service_declaration
+    name: (identifier)
+    body: (service_body
+      (errors_clause
+        keyword: (identifier)
+        (error_response
+          code: (integer)
+          body: (type
+            name: (qualified_name
+              (identifier))))
+        (error_response
+          code: (integer)
+          body: (type
+            name: (qualified_name
+              (identifier))))
+        (error_response
+          code: (integer))
+        (error_response
+          body: (type
+            name: (qualified_name
+              (identifier))))))))
+
+==================
+errors and default stay legal names
+==================
+
+schema a
+
+model Result {
+  #1 errors  string[]
+  #2 default int32
+}
+
+service S {
+  a(): A
+  errors(): B
+  default(): C  get "/c"
+}
+
+---
+
+(source_file
+  (schema_declaration
+    name: (qualified_name
+      (identifier)))
+  (model_declaration
+    name: (identifier)
+    body: (model_body
+      (field
+        ordinal: (ordinal)
+        name: (identifier)
+        type: (type
+          name: (qualified_name
+            (identifier))
+          (list_suffix)))
+      (field
+        ordinal: (ordinal)
+        name: (identifier)
+        type: (type
+          name: (qualified_name
+            (identifier))))))
+  (service_declaration
+    name: (identifier)
+    body: (service_body
+      (operation
+        name: (identifier)
+        response: (payload
+          type: (type
+            name: (qualified_name
+              (identifier)))))
+      (operation
+        name: (identifier)
+        response: (payload
+          type: (type
+            name: (qualified_name
+              (identifier)))))
+      (operation
+        name: (identifier)
+        response: (payload
+          type: (type
+            name: (qualified_name
+              (identifier))))
+        binding: (http_binding
+          verb: (identifier)
+          path: (string))))))

@@ -76,6 +76,11 @@ model Order {
 service Orders {
 // <- keyword
 //      ^ type
+  errors { 400 Problem  default }
+//^ keyword
+//         ^ number
+//             ^ type
+//                      ^ constant.builtin
   #1 get(OrderId): Order  get "/orders/{id}"
 // ^ constant
 //   ^ function
@@ -87,4 +92,13 @@ service Orders {
 //          ^ keyword
 //                 ^ type
 //                         ^ keyword
+  #3 place(PlaceOrder): Order  post "/orders" 201  errors { 409 Conflict }
+//                                            ^ number
+//                                                 ^ keyword
+//                                                          ^ number
+//                                                              ^ type
+  #4 cancel(OrderId)  delete "/orders/{id}" 204  errors { 503  default Problem }
+//                                                        ^ number
+//                                                             ^ constant.builtin
+//                                                                     ^ type
 }
